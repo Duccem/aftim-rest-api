@@ -67,6 +67,19 @@ router.get('/:id/grupos',validar, async (req:Request, res:Response):Promise<Resp
     }
 });
 
+router.get('/:eId/grupos/:gId/conceptos',validar, async (req:Request, res:Response):Promise<Response> => {
+    let { eId, gId } = req.params;
+    try {
+        let {message,response,code} = await controller.getConceptsByGroupByEmpresa(eId,gId,req.query);
+        return res.status(code).json(message || response);
+    } catch (error) {
+        console.log(error);
+        return res
+                .status(InternalServerError.code)
+                .json({message:InternalServerError.message});
+    }
+});
+
 router.get('/:id/subgrupos',validar, async (req:Request, res:Response):Promise<Response> => {
     let {id} = req.params;
     try {

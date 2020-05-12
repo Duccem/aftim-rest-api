@@ -61,7 +61,7 @@ export const getOne = async (id: string | number, query: any): Promise<any> => {
 export const getTotal = async (query: any):Promise<any> =>{
     try {
         query.fields = 'subtotal,subtotal_dolar';
-        query.tipos_facturas_id = ['1','5'];
+        query.adm_tipos_facturas_id = ['1','5'];
         query.estatus_pago = '1';
         let facturas:IFacturas[] = await consult.get(model,query);
         let count = facturas.length;
@@ -233,6 +233,23 @@ export const deleteDetail = async (params: any): Promise<any> => {
         await consult.remove(submodel, id1);
 
         return respuestas.Deleted;
+    } catch (error) {
+        if (error.message === 'BD_SYNTAX_ERROR') return respuestas.BadRequest;
+        console.log(`Error al consultar la base de datos, error: ${error}`);
+        return respuestas.InternalServerError;
+    }
+}
+
+
+export const getCantidad = async (query: any):Promise<any> =>{
+    try {
+        let facturas:IFacturas[] = await consult.get(model,query);
+        let count = facturas.length;
+        let totalCount: number = await consult.count(model);
+        if (count <= 0) return respuestas.Empty;
+        
+        let response = Object.assign({ totalCount, count });
+        return { response, code: respuestas.Ok.code };
     } catch (error) {
         if (error.message === 'BD_SYNTAX_ERROR') return respuestas.BadRequest;
         console.log(`Error al consultar la base de datos, error: ${error}`);

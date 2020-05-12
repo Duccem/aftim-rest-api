@@ -257,6 +257,34 @@ export const getPedidosByEmpresa = async (id: string | number, query: any): Prom
     }
 }
 
+/**
+ * Get all concepts of a group ofa company
+ * @param id id of the company 
+ * @param query modifier of the consult
+ */
+export const getConceptsByGroupByEmpresa = async (eId: string | number, gId: string | number, query: any): Promise<any> => {
+    try {
+      if (isNaN(eId as number) || isNaN(gId as number)) return respuestas.InvalidID;
+
+        let sql =  `SELECT * FROM adm_conceptos WHERE adm_empresa_id=${eId} AND adm_grupos_id=${gId}`;
+
+        let data = await consult.getPersonalized(sql);
+        let totalCount = await consult.count('adm_conceptos');
+        let count = data.length;
+        let { limit } = query;
+
+        if (count <= 0) return respuestas.Empty;
+
+        let link = links.pages(data, `empresa/${eId}/grupos/${gId}`, count, totalCount, limit);
+        let response = Object.assign({ totalCount, count, data }, link);
+        return { response, code: respuestas.Ok.code };
+    } catch (error) {
+        if (error.message === 'BD_SYNTAX_ERROR') return respuestas.BadRequest;
+        console.log(`Error en el controlador ${model}, error: ${error}`);
+        return respuestas.InternalServerError;
+    }
+}
+
 export async function getUserByCompany(id: string | number, query: any): Promise<any>{
     try {
         if (isNaN(id as number)) return respuestas.InvalidID;

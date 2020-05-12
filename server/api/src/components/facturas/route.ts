@@ -26,6 +26,17 @@ router.get('/total',validar, async (req:Request, res:Response):Promise<Response>
     }
 });
 
+router.get('/cantidad',validar, async (req:Request, res:Response):Promise<Response> => {
+    try {
+        let { message, response, code } = await controller.getCantidad(req.query);
+        return res.status(code).json(message || response);
+    } catch (error) {
+        return res
+            .status(InternalServerError.code)
+            .json({ message: InternalServerError.message });
+    }
+});
+
 router.get('/:id',validar, async (req:Request, res:Response):Promise<Response> => {
     let {id} = req.params;
     try {
