@@ -4,5 +4,5 @@
         ".env"
     ],
     "ext":"js,ts,json",
-    "exec": "ts-node  --transpile-only ./src/apps/api/index.ts"
+    "exec": "cross-env NODE_ENV=dev ts-node  --transpile-only ./src/apps/api/index.ts"
 }

@@ -11,12 +11,13 @@ import { Inject, Service } from 'typedi';
  * Uses cases of authentication of users, login, signup and log outh
  */
 
-@Service("UserAccessService")
+@Service('UserAccessService')
 export class UserAccessService {
 	constructor(
-		@Inject("Repository") private readonly repository: Repository, 
-		@Inject("EventBus") private readonly eventBus: EventBus, 
-		@Inject("Auth") private readonly auth: Auth) {}
+		@Inject('Repository') private readonly repository: Repository,
+		@Inject('EventBus') private readonly eventBus: EventBus,
+		@Inject('Auth') private readonly auth: Auth
+	) {}
 
 	/**
 	 * Sign up function
@@ -40,7 +41,7 @@ export class UserAccessService {
 	}
 
 	public async login(identifier: string, password: string): Promise<UserJsonDocument> {
-		const users: any[] = await this.repository.list('user', {
+		const users: User[] = await this.repository.list<User>(User)({
 			where: {
 				or: {
 					username: identifier,
@@ -49,16 +50,16 @@ export class UserAccessService {
 			},
 		});
 		if (!users[0]) throw new Unauthorized('User not found');
-		const user = new User(users[0]);
+		const user = users[0];
 		let valid = user.personalData.password.compare(password);
-		
+
 		if (!valid) throw new Unauthorized('Oops! incorrect password');
 
 		return this.auth.formatResponse(user.toPrimitives());
 	}
 
-	public log(){
-		return "probando"
+	public log() {
+		return 'probando';
 	}
 
 	public async userPayment(data: any) {}

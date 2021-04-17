@@ -22,19 +22,15 @@ export type Connections = {
 export const connect = async (logger: Logger): Promise<Connections> => {
 	try {
 		let repository = new MongoDBRepoitory(database, logger);
-		let eventBus = new InMemoryAsyncEventBus();
-		//let eventBus = new RabbitMQEventBus(messageQ, logger);
-		//let cacher = new RedisCacheBucket(cache, logger);
-		await Promise.all([
-			repository.setConnection(),
-			//cacher.setConnection(),
-			//eventBus.setConnection(),
-		]);
+		//let eventBus = new InMemoryAsyncEventBus();
+		let eventBus = new RabbitMQEventBus(messageQ, logger);
+		let cacher = new RedisCacheBucket(cache, logger);
+		await Promise.all([repository.setConnection(), cacher.setConnection(), eventBus.setConnection()]);
 
 		return {
 			repository,
 			eventBus,
-			//cacher,
+			cacher,
 			logger,
 		};
 	} catch (error) {

@@ -1,3 +1,3 @@
-export type JsonDocument  = {
-	_id?: string,
+export type JsonDocument = {
+	_id?: string;
 };

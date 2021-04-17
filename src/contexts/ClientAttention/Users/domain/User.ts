@@ -32,7 +32,14 @@ export class User extends Entity {
 	 * * Return a complete data description of the user
 	 */
 	public getDescription(): string {
-		return 'The user' + this.personalData.firstname + ' ' + this.personalData.lastname + ' Also know as: ' + this.personalData.username;
+		return (
+			'The user' +
+			this.personalData.firstname +
+			' ' +
+			this.personalData.lastname +
+			' Also know as: ' +
+			this.personalData.username
+		);
 	}
 
 	/**
@@ -48,7 +55,9 @@ export class User extends Entity {
 	 */
 	public spend(cost: number): number {
 		this.administrativeData.money -= cost;
-		let newDailySpend = (this.administrativeData.daily_spend * this.administrativeData.daily_travels + cost) / this.administrativeData.daily_travels;
+		let newDailySpend =
+			(this.administrativeData.daily_spend * this.administrativeData.daily_travels + cost) /
+			this.administrativeData.daily_travels;
 		this.administrativeData.daily_spend = newDailySpend;
 		return newDailySpend;
 	}
@@ -65,7 +74,7 @@ export class User extends Entity {
 	public toPrimitives(): UserJsonDocument {
 		return {
 			_id: this._id.toString(),
-			personalData:{
+			personalData: {
 				username: this.personalData.username,
 				password: this.personalData.password.toString(),
 				firstname: this.personalData.firstname,
@@ -75,7 +84,7 @@ export class User extends Entity {
 				sex: this.personalData.sex,
 			},
 			administrativeData: this.administrativeData,
-			configurationData: this.configurationData
+			configurationData: this.configurationData,
 		};
 	}
 }

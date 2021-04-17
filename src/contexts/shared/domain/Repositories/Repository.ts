@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import { ConsulterOptions } from "../Types/OptionsRepository";
-import { JsonDocument } from "../Types/JsonDocument";
-import { Nulleable } from "../Types/Nulleable";
+import { Request, Response, NextFunction } from 'express';
+import { ConsulterOptions } from '../Types/OptionsRepository';
+import { JsonDocument } from '../Types/JsonDocument';
+import { Nulleable, Constructor } from '../Types/Nulleable';
+import { Entity } from '../Entity';
 
 /**
  * Interface of a Consulter type class that allow to consult and execute queries on a database
@@ -20,7 +21,7 @@ export interface Repository {
 	 * @param options The options of the consult
 	 * @returns Ana array of records, in relation to the model of the table
 	 */
-	list<T extends JsonDocument>(model: string, options?: ConsulterOptions): Promise<Array<T>>;
+	list<T extends Entity>(Model: Constructor<T>): (options: ConsulterOptions) => Promise<Array<T>>;
 
 	/**
 	 * Method that return an record of one regist on a target table
@@ -29,7 +30,7 @@ export interface Repository {
 	 * @param options The options of the consult
 	 * @returns An record, in relation to the model of the table
 	 */
-	get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<T>;
+	get<T extends Entity>(Model: Constructor<T>): (id: number | string, options?: ConsulterOptions) => Promise<Nulleable<T>>;
 
 	/**
 	 * Method that allow to insert a new record on a table
@@ -61,7 +62,7 @@ export interface Repository {
 	 * @param sql Custom query
 	 * @returns An array of results in relation with the query
 	 */
-	execute(query: any): Promise<Array<any>>;
+	execute(model: string, query: any): Promise<Array<any>>;
 
 	/**
 	 * Method that count the number of records on a table
@@ -82,7 +83,6 @@ export interface Repository {
  * The classes based on this interface has as objective the handling of the diferents connections and databases
  */
 export interface MultiTenantRepository extends Repository {
-	
 	/**
 	 * Middleware to get the tenantId of the request
 	 * @param req Request Object

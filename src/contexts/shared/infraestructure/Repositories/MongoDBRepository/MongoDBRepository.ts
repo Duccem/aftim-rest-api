@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Repository, MultiTenantRepository } from '../../../domain/Repositories/Repository';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
 import { JsonDocument } from '../../../domain/Types/JsonDocument';
-import { Nulleable } from '../../../domain/Types/Nulleable';
+import { Nulleable, Constructor } from '../../../domain/Types/Nulleable';
 import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
 import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
 import { GeneralError } from '../../../domain/Errors/Errors';
@@ -15,6 +15,10 @@ import { Logger } from '../../../infraestructure/Logger';
 
 //Own context
 import { MongoDBQueryMaker } from './MongoDBQueryMaker';
+import { Queries } from '@contexts/shared/domain/Repositories/QueryType';
+import { Query } from '@contexts/shared/domain/Repositories/Query';
+import { getName } from './GetName';
+import { Entity } from '@contexts/shared/domain/Entity';
 
 /**
  * Implement of the repository interface to MongoDB databases
@@ -55,21 +59,27 @@ export class MongoDBRepoitory implements Repository {
 		throw new GeneralError('Not connection to database');
 	}
 
-	public async list<T extends JsonDocument>(model: string, options: ConsulterOptions): Promise<Array<T>> {
-		let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(model, options);
-		let data: Array<T> = await this.getConnection(model)
-			.find(conditional, fields)
-			.skip(offset)
-			.limit(limit)
-			.sort({ [`${orderField}`]: order })
-			.toArray();
-		return data;
-	}
+	public list = <T extends Entity>(Model: Constructor<T>) => {
+		return async (options: ConsulterOptions): Promise<Array<T>> => {
+			let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(Model.name, options);
 
-	public async get<T extends JsonDocument>(model: string, id: string, options: ConsulterOptions): Promise<T> {
-		let { conditional, fields } = this.query.findOne(model, id, options);
-		let data: Array<T> = await this.getConnection(model).find(conditional, fields).limit(1).toArray();
-		return data[0];
+			let data: Array<any> = await this.getConnection(Model.name)
+				.find(conditional, fields)
+				.skip(offset)
+				.limit(limit)
+				.sort({ [`${orderField}`]: order })
+				.toArray();
+			let response: Array<T> = data.map((element: any) => new Model(element));
+			return response;
+		};
+	};
+
+	public get<T extends Entity>(Model: Constructor<T>) {
+		return async (id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>> => {
+			let { conditional, fields } = this.query.findOne(Model.name, id, options);
+			let data: any = (await this.getConnection(Model.name).find(conditional, fields).limit(1).toArray()).shift();
+			return data ? new Model(data) : null;
+		};
 	}
 
 	public async insert(model: string, data: any): Promise<any> {
@@ -87,8 +97,8 @@ export class MongoDBRepoitory implements Repository {
 		return result;
 	}
 
-	public async execute(query: any): Promise<Array<any>> {
-		throw new GeneralError('Este metodo no esta disponible en esta implementacion');
+	public async execute(model: string, query: Query): Promise<Array<any>> {
+		return await this.getConnection(model).aggregate(query).toArray();
 	}
 
 	public async count(model: string, options: ConsulterOptions): Promise<number> {
