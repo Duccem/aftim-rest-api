@@ -27,7 +27,9 @@ jobs:
       run: npm install --save
     # - name: Testing
     #   run: npm test
-    - name: Adding the remote
-      run: git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-    - name: Deploying
-      run: git push heroku:HEAD master -f
+    - name: Deploying to heroku
+      uses: akhileshns/heroku-deploy@v3.12.12
+      with:
+        heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+        heroku_app_name: "ducen"
+        heroku_email: "ducen29@gmail.com"
