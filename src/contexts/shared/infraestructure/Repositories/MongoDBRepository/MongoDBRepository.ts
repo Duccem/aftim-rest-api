@@ -37,7 +37,10 @@ export class MongoDBRepoitory implements Repository {
 				useUnifiedTopology: true,
 				useNewUrlParser: true,
 			});
-			this.logger.log(`connected to database: ${this.database.host}/${this.database.database}`, { type: 'database', color: 'success' });
+			this.logger.log(`connected to database: ${this.database.host}/${this.database.database}`, {
+				type: 'database',
+				color: 'success',
+			});
 		} catch (error) {
 			console.log(error);
 			throw new GeneralError('Error on database connection');
@@ -94,7 +97,7 @@ export class MongoDBRepoitory implements Repository {
 		return count;
 	}
 
-	public async exists(model: string, id: string): Promise<boolean>{
+	public async exists(model: string, id: string): Promise<boolean> {
 		let result = await this.getConnection(model).indexExists(id);
 		return result;
 	}

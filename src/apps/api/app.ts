@@ -12,13 +12,11 @@ import { connect } from './config/connections';
 import { setContainer } from './config/container';
 import { registerObservers } from './schema/observers/observer';
 import { makeSchema } from './schema/schema';
-import { env } from './config/keys'
+import { env } from './config/keys';
 
 //Shared context domain implematations
 import { Logger } from '../../contexts/shared/infraestructure/Logger';
 import { GraphErrorHandler } from '../../contexts/shared/infraestructure/Errors/GraphErrorHandler';
-
-
 
 /**
  * Class of the principal application of the server
@@ -39,8 +37,8 @@ export class App {
 	constructor(private port?: number | string) {
 		this.app = express();
 		this.logger = new Logger({
-			mode: env || "dev",
-			format: 'utc'
+			mode: env || 'dev',
+			format: 'utc',
 		});
 		this.settings();
 	}
@@ -57,17 +55,14 @@ export class App {
 		this.app.use(ducentrace());
 	}
 
-	private async intialize(){
-		const connections = await connect(this.logger)
+	private async intialize() {
+		const connections = await connect(this.logger);
 		setContainer(connections);
 		registerObservers();
-		const schema = await makeSchema();
-		return schema;
 	}
 
-	public async bootstrap(){
-		this.middlewares();
-		let schema = await this.intialize()
+	private async apolloServer() {
+		const schema = await makeSchema();
 		const server = new ApolloServer({
 			schema,
 			context: ({ req }) => {
@@ -75,9 +70,15 @@ export class App {
 			},
 			playground: true,
 			introspection: true,
-			formatError: GraphErrorHandler
+			formatError: GraphErrorHandler,
 		});
-		server.applyMiddleware({ app: this.app, path: '/api/v1' });
+		server.applyMiddleware({ app: this.app, path: '/api/graph/v1' });
+	}
+
+	public async bootstrap() {
+		this.middlewares();
+		await this.intialize();
+		await this.apolloServer();
 	}
 
 	/**

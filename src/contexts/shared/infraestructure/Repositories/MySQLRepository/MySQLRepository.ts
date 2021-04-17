@@ -1,20 +1,20 @@
 //Libraries
-import { createPool, Pool } from "mysql2/promise";
-import { createNamespace, getNamespace } from "continuation-local-storage";
-import { NextFunction, Request, Response } from "express";
+import { createPool, Pool } from 'mysql2/promise';
+import { createNamespace, getNamespace } from 'continuation-local-storage';
+import { NextFunction, Request, Response } from 'express';
 
 //Personal imports
-import { Repository, MultiTenantRepository } from "../../../domain/Repositories/Repository";
-import { QueryMaker } from "../../../domain/Repositories/QueryMaker";
-import { JsonDocument } from "../../../domain/Types/JsonDocument";
-import { Nulleable } from "../../../domain/Types/Nulleable";
-import { DatabaseOptions } from "../../../domain/Types/DatabaseOptions";
-import { ConsulterOptions } from "../../../domain/Types/OptionsRepository";
-import { GeneralError } from "../../../domain/Errors/Errors";
-import { Logger } from "../../../infraestructure/Logger";
+import { Repository, MultiTenantRepository } from '../../../domain/Repositories/Repository';
+import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
+import { JsonDocument } from '../../../domain/Types/JsonDocument';
+import { Nulleable } from '../../../domain/Types/Nulleable';
+import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
+import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
+import { GeneralError } from '../../../domain/Errors/Errors';
+import { Logger } from '../../../infraestructure/Logger';
 
 //Own context
-import { MySQLQueryMaker } from "./MySQLQueryMaker";
+import { MySQLQueryMaker } from './MySQLQueryMaker';
 
 /**
  * Implement of the Repository interface to MySQL Databases
@@ -36,7 +36,7 @@ export class MySQLRepository implements Repository {
 	 */
 	public async endConnection(): Promise<void> {
 		if (this.connection) await this.connection.end();
-		this.logger.log(`connection closed`, { type: "database", color: "system" });
+		this.logger.log(`connection closed`, { type: 'database', color: 'system' });
 	}
 
 	/**
@@ -46,33 +46,33 @@ export class MySQLRepository implements Repository {
 		if (this.connection) {
 			return this.connection;
 		}
-		throw new GeneralError("Not connection to database");
+		throw new GeneralError('Not connection to database');
 	}
 
 	public async setConnection(database?: string): Promise<any> {
-		if(this.connection) return this.connection;
+		if (this.connection) return this.connection;
 		try {
 			this.connection = createPool(this.database);
-			this.logger.log(`connected to ${this.database.database}`, { type: "database", color: "system" });
+			this.logger.log(`connected to ${this.database.database}`, { type: 'database', color: 'system' });
 		} catch (error) {
-			throw new GeneralError("Error on database connection");
+			throw new GeneralError('Error on database connection');
 		}
 		return this.connection;
 	}
 
 	public async list<T extends JsonDocument>(model: string, options?: ConsulterOptions): Promise<Array<T>> {
 		let sql = this.query.findMany(model, options);
-		this.logger.log(sql, { type: "database", color: "system" });
+		this.logger.log(sql, { type: 'database', color: 'system' });
 		let data: any = await this.getConnection().query(sql);
 		let response = JSON.parse(JSON.stringify(data[0]));
 		return response;
 	}
 
-	public async get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>> {
+	public async get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<T> {
 		let sql = this.query.findOne(model, id, options);
-		this.logger.log(sql, { type: "database", color: "system" });
+		this.logger.log(sql, { type: 'database', color: 'system' });
 		let data: any = await this.getConnection().query(sql);
-		if (!data[0][0]) return null;
+		if (!data[0][0]) return <T>{};
 		let response = JSON.parse(JSON.stringify(data[0][0]));
 		return response;
 	}
@@ -93,7 +93,7 @@ export class MySQLRepository implements Repository {
 	}
 
 	public async execute(query: any): Promise<Array<any>> {
-		this.logger.log(query, { type: "database", color: "system" });
+		this.logger.log(query, { type: 'database', color: 'system' });
 		let data: any = await this.getConnection().query(query);
 		let response = JSON.parse(JSON.stringify(data[0]));
 		return response;
@@ -105,7 +105,7 @@ export class MySQLRepository implements Repository {
 		return parseInt(total);
 	}
 
-	public async exists(model: string, id: string): Promise<boolean>{
+	public async exists(model: string, id: string): Promise<boolean> {
 		console.log(model, id);
 		return false;
 	}
@@ -122,7 +122,7 @@ export class MySQLMultiTenantRepository extends MySQLRepository implements Multi
 		super(options, logger);
 	}
 
-	public async setConnection(database: string = "generic"): Promise<any> {
+	public async setConnection(database: string = 'generic'): Promise<any> {
 		let con = this.connectionPool[database];
 		if (con) {
 			return con;
@@ -130,28 +130,28 @@ export class MySQLMultiTenantRepository extends MySQLRepository implements Multi
 		try {
 			this.database.database = database;
 			con = createPool(this.database);
-			this.logger.log(`connected to ${this.database.database}`, { type: "database", color: "system" });
+			this.logger.log(`connected to ${this.database.database}`, { type: 'database', color: 'system' });
 			this.connectionPool[database] = con;
 		} catch (error) {
-			throw new GeneralError("Error on database connection");
+			throw new GeneralError('Error on database connection');
 		}
 		return con;
 	}
 
 	protected getConnection(): any {
-		const nameSpace = getNamespace("unique context");
-		const con = nameSpace.get("connection");
+		const nameSpace = getNamespace('unique context');
+		const con = nameSpace.get('connection');
 		if (!con) {
-			throw new GeneralError("Connection is not defined for any tenant database");
+			throw new GeneralError('Connection is not defined for any tenant database');
 		}
 		return con;
 	}
 
 	public async resolveTenant(req: Request, _res: Response, next: NextFunction): Promise<void> {
-		let nameSpace = createNamespace("unique context");
+		let nameSpace = createNamespace('unique context');
 		let connection = await this.setConnection(req.tenantId);
 		nameSpace.run(() => {
-			nameSpace.set("connection", connection); // This will set the knex instance to the 'connection'
+			nameSpace.set('connection', connection); // This will set the knex instance to the 'connection'
 			next();
 		});
 	}
@@ -160,10 +160,10 @@ export class MySQLMultiTenantRepository extends MySQLRepository implements Multi
 		try {
 			for (const key in this.connectionPool) {
 				await this.connectionPool[key].end();
-				this.logger.log(`connection closed to ${key} database`, { type: "database", color: "system" });
+				this.logger.log(`connection closed to ${key} database`, { type: 'database', color: 'system' });
 			}
 		} catch (error) {
-			throw new GeneralError("Error closing the connections");
+			throw new GeneralError('Error closing the connections');
 		}
 	}
 }

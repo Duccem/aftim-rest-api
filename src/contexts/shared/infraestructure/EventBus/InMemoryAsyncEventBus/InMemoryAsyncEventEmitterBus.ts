@@ -4,9 +4,8 @@ import { DomainEventSubscriber } from '../../../domain/DomainEvents/DomainEventS
 
 export class InMemoryAsyncEventEmitterBus {
 	private channel: EventEmitter;
-	constructor(subscribers: Array<DomainEventSubscriber>) {
+	constructor() {
 		this.channel = new EventEmitter();
-		this.registerSubscribers(subscribers);
 	}
 
 	public registerSubscribers(subscribers?: DomainEventSubscriber[]) {
