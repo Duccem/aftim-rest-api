@@ -10,8 +10,8 @@ import cookieParser from 'cookie-parser';
 // bootraping functions
 import { connect } from './config/connections';
 import { setContainer } from './config/container';
-import { registerObservers } from './schema/observers/observer';
-import { makeSchema } from './schema/schema';
+import { registerObservers } from './graphql/observers/observer';
+import { makeSchema } from './graphql/schema';
 import { env } from './config/keys';
 
 //Shared context domain implematations
