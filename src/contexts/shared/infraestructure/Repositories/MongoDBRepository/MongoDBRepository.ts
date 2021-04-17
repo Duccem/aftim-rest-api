@@ -63,7 +63,7 @@ export class MongoDBRepoitory implements Repository {
 		return data;
 	}
 
-	public async get<T extends JsonDocument>(model: string, id: string, options: ConsulterOptions): Promise<Nulleable<T>> {
+	public async get<T extends JsonDocument>(model: string, id: string, options: ConsulterOptions): Promise<T> {
 		let { conditional, fields } = this.query.findOne(model, id, options);
 		let data: Array<T> = await this.getConnection(model).find(conditional, fields).limit(1).toArray();
 		return data[0];
@@ -92,6 +92,11 @@ export class MongoDBRepoitory implements Repository {
 		let { conditional } = this.query.count(model, options);
 		let count = await this.getConnection(model).find(conditional).count();
 		return count;
+	}
+
+	public async exists(model: string, id: string): Promise<boolean>{
+		let result = await this.getConnection(model).indexExists(id);
+		return result;
 	}
 }
 

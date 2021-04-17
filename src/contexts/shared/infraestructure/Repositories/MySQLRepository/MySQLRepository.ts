@@ -104,6 +104,11 @@ export class MySQLRepository implements Repository {
 		let total = count[0][0].total;
 		return parseInt(total);
 	}
+
+	public async exists(model: string, id: string): Promise<boolean>{
+		console.log(model, id);
+		return false;
+	}
 }
 
 /**

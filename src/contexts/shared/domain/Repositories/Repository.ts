@@ -29,7 +29,7 @@ export interface Repository {
 	 * @param options The options of the consult
 	 * @returns An record, in relation to the model of the table
 	 */
-	get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>>;
+	get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<T>;
 
 	/**
 	 * Method that allow to insert a new record on a table
@@ -64,12 +64,17 @@ export interface Repository {
 	execute(query: any): Promise<Array<any>>;
 
 	/**
-	 * Methd that count the number of records on a table
+	 * Method that count the number of records on a table
 	 * @param model Target table name
 	 * @param options The options of the consult
 	 * @returns The number of records
 	 */
 	count(model: string, options?: ConsulterOptions): Promise<number>;
+
+	/**
+	 * Method tha verify if an index appears in the Database
+	 */
+	exists(model: string, id: string): Promise<boolean>;
 }
 
 /**

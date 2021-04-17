@@ -6,3 +6,4 @@ export type ProfileJsonDocument = JsonDocument & {
     name: string;
     policies: Policy[]
 }
+
