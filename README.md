@@ -1,6 +1,6 @@
 # Complex Backend microservice
 
-An projecto based on nodejs backend server microservices structure
+A project based on nodejs backend server microservices structure
 
 ## Usage
 

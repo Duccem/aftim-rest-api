@@ -1,24 +1,19 @@
 //Libraries
-import { MongoClient, Collection } from 'mongodb';
+import { Entity } from '@contexts/shared/domain/Entity';
+import { Query } from '@contexts/shared/domain/Repositories/Query';
 import { createNamespace, getNamespace } from 'continuation-local-storage';
 import { NextFunction, Request, Response } from 'express';
-
-//Personal Imports
-import { Repository, MultiTenantRepository } from '../../../domain/Repositories/Repository';
-import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
-import { JsonDocument } from '../../../domain/Types/JsonDocument';
-import { Nulleable, Constructor } from '../../../domain/Types/Nulleable';
-import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
-import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
+import { Collection, MongoClient } from 'mongodb';
 import { GeneralError } from '../../../domain/Errors/Errors';
+import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
+//Personal Imports
+import { MultiTenantRepository, Repository } from '../../../domain/Repositories/Repository';
+import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
+import { Constructor, Nulleable } from '../../../domain/Types/Nulleable';
+import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
 import { Logger } from '../../../infraestructure/Logger';
-
 //Own context
 import { MongoDBQueryMaker } from './MongoDBQueryMaker';
-import { Queries } from '@contexts/shared/domain/Repositories/QueryType';
-import { Query } from '@contexts/shared/domain/Repositories/Query';
-import { getName } from './GetName';
-import { Entity } from '@contexts/shared/domain/Entity';
 
 /**
  * Implement of the repository interface to MongoDB databases

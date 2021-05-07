@@ -1,22 +1,21 @@
-////ARCHIVO DE CONFIGURACION DEL SERVIDOR
+//ARCHIVO DE CONFIGURACION DEL SERVIDOR
 //Requerimos los modulos necesarios para la app
 //Libraries
-import express, { Application } from 'express';
 import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import ducentrace from 'ducentrace';
-import cookieParser from 'cookie-parser';
-
+import express, { Application } from 'express';
+import { Server } from 'http';
+import { GraphErrorHandler } from '../../contexts/shared/infraestructure/Errors/GraphErrorHandler';
+//Shared context domain implematations
+import { Logger } from '../../contexts/shared/infraestructure/Logger';
 // bootraping functions
 import { connect } from './config/connections';
 import { setContainer } from './config/container';
+import { env } from './config/keys';
 import { registerObservers } from './graphql/observers/observer';
 import { makeSchema } from './graphql/schema';
-import { env } from './config/keys';
-
-//Shared context domain implematations
-import { Logger } from '../../contexts/shared/infraestructure/Logger';
-import { GraphErrorHandler } from '../../contexts/shared/infraestructure/Errors/GraphErrorHandler';
 
 /**
  * Class of the principal application of the server
@@ -29,6 +28,7 @@ import { GraphErrorHandler } from '../../contexts/shared/infraestructure/Errors/
 
 export class App {
 	public app: Application;
+	public server: Server;
 	public logger: Logger;
 	/**
 	 *
@@ -36,6 +36,7 @@ export class App {
 	 */
 	constructor(private port?: number | string) {
 		this.app = express();
+		this.server = new Server(this.app);
 		this.logger = new Logger({
 			mode: env || 'dev',
 			format: 'utc',
@@ -56,7 +57,7 @@ export class App {
 	}
 
 	private async intialize() {
-		const connections = await connect(this.logger);
+		const connections = await connect(this.server, this.logger);
 		setContainer(connections);
 		registerObservers();
 	}

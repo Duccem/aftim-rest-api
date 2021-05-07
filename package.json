@@ -48,6 +48,8 @@
 		"nodemailer": "^6.4.6",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.0",
+		"socket-controllers": "^0.0.5",
+		"socket.io": "^4.0.1",
 		"type-graphql": "^1.1.1",
 		"typedi": "^0.8.0",
 		"uuid": "^8.3.0",
