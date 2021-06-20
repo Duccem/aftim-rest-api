@@ -1,21 +1,20 @@
 //ARCHIVO DE CONFIGURACION DEL SERVIDOR
 //Requerimos los modulos necesarios para la app
 //Libraries
-import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import ducentrace from 'ducentrace';
 import express, { Application } from 'express';
 import { Server } from 'http';
-import { GraphErrorHandler } from '../../contexts/shared/infraestructure/Errors/GraphErrorHandler';
+import passport from 'passport';
 //Shared context domain implematations
 import { Logger } from '../../contexts/shared/infraestructure/Logger';
-// bootraping functions
+// bootstrapping functions
 import { connect } from './config/connections';
 import { setContainer } from './config/container';
 import { env } from './config/keys';
-import { registerObservers } from './graphql/observers/observer';
-import { makeSchema } from './graphql/schema';
+import { registerRoutes } from './controllers';
+import { registerObservers } from './observers/observer';
 
 /**
  * Class of the principal application of the server
@@ -54,32 +53,19 @@ export class App {
 		this.app.use(express.json());
 		this.app.use(express.urlencoded({ extended: false }));
 		this.app.use(ducentrace());
+		this.app.use(passport.initialize());
 	}
 
-	private async intialize() {
+	private async initialize() {
 		const connections = await connect(this.server, this.logger);
 		setContainer(connections);
 		registerObservers();
-	}
-
-	private async apolloServer() {
-		const schema = await makeSchema();
-		const server = new ApolloServer({
-			schema,
-			context: ({ req }) => {
-				return { req };
-			},
-			playground: true,
-			introspection: true,
-			formatError: GraphErrorHandler,
-		});
-		server.applyMiddleware({ app: this.app, path: '/api/graph/v1' });
+		registerRoutes(this.app);
 	}
 
 	public async bootstrap() {
 		this.middlewares();
-		await this.intialize();
-		await this.apolloServer();
+		await this.initialize();
 	}
 
 	/**

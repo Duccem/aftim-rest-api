@@ -1,8 +1,7 @@
-import { EventBus } from '../../../../contexts/shared/domain/DomainEvents/EventBus';
 import glob from 'glob';
 import Container from 'typedi';
-
-import { DomainEventSubscriber } from '../../../../contexts/shared/domain/DomainEvents/DomainEventSubscriber';
+import { DomainEventSubscriber } from '../../../contexts/shared/domain/DomainEvents/DomainEventSubscriber';
+import { EventBus } from '../../../contexts/shared/domain/DomainEvents/EventBus';
 
 const subscribers = new Array<DomainEventSubscriber>();
 
