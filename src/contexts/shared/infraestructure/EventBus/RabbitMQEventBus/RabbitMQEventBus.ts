@@ -1,9 +1,9 @@
+import { connect, Options } from 'amqplib';
 import { DomainEvent } from '../../../domain/DomainEvents/DomainEvent';
 import { DomainEventSubscriber } from '../../../domain/DomainEvents/DomainEventSubscriber';
 import { EventBus } from '../../../domain/DomainEvents/EventBus';
-import { RabbitMQEventEmitterBus } from './RabbitMQEventEmitterBus';
-import { connect, Options } from 'amqplib';
 import { Logger } from '../../Logger';
+import { RabbitMQEventEmitterBus } from './RabbitMQEventEmitterBus';
 
 export class RabbitMQEventBus implements EventBus {
 	private bus: RabbitMQEventEmitterBus;
@@ -19,18 +19,14 @@ export class RabbitMQEventBus implements EventBus {
 		let connection = await connect(this.messageQ);
 		let channel = await connection.createChannel();
 		this.bus.setChannel(channel);
-		this.logger.log(
-			`connected to the message queue server: ${this.messageQ.protocol}:${this.messageQ.hostname}:${this.messageQ.port}`,
-			{ type: 'messageQ', color: 'system' }
+		this.logger.connection(
+			`connected to the message queue server: ${this.messageQ.protocol}:${this.messageQ.hostname}:${this.messageQ.port}`
 		);
 	}
 
 	async publish(events: DomainEvent[]): Promise<void> {
 		this.bus.publish(events);
-		this.logger.log(`Published this events: ${events.map((event) => event.eventName).join(' ')}`, {
-			type: 'message',
-			color: 'system',
-		});
+		this.logger.info(`Published this events: ${events.map((event) => event.eventName).join(' ')}`);
 	}
 
 	addSubscribers(subscribers: Array<DomainEventSubscriber>) {

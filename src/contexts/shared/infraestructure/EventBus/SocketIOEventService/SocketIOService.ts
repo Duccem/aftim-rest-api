@@ -14,9 +14,6 @@ export class SocketIOService {
 	}
 	public emitEvent(eventName: string, eventPayload: object) {
 		this.socket?.emit(eventName, eventPayload);
-		this.logger.log('Event emitted: ' + eventName, {
-			color: 'system',
-			type: 'messageQ',
-		});
+		this.logger.info('Event emitted: ' + eventName);
 	}
 }

@@ -1,31 +1,29 @@
-import { Password } from './ValueObjects/Password';
-import { UserAdministrativeData, UserConfigurationData, UserJsonDocument, UserPersonalData } from './Types/UserJsonDocument';
-import { UuidValueObject } from '../../../shared/domain/ValueObjects/UuidValueObject';
-import { UserBirthDate } from './ValueObjects/UserBirthDate';
-import { Email } from './ValueObjects/Email';
 import { Entity } from '../../../shared/domain/Entity';
+import { UuidValueObject } from '../../../shared/domain/ValueObjects/UuidValueObject';
+import { UserAdministrativeData, UserConfigurationData, UserJsonDocument, UserPersonalData } from './Types/UserJsonDocument';
+import { Email } from './ValueObjects/Email';
+import { Password } from './ValueObjects/Password';
+import { UserBirthDate } from './ValueObjects/UserBirthDate';
 //Principal class of Users
 export class User extends Entity {
 	public _id: UuidValueObject;
 	public personalData: UserPersonalData;
-	public administrativeData: UserAdministrativeData;
-	public configurationData: UserConfigurationData;
-	public profiles?: string[];
+	public administrativeData?: UserAdministrativeData;
+	public configurationData?: UserConfigurationData;
 	constructor(initObject: UserJsonDocument) {
 		super();
 		this._id = initObject._id ? new UuidValueObject(initObject._id) : UuidValueObject.random();
 		this.personalData = {
 			username: initObject.personalData.username,
-			password: new Password(initObject.personalData.password),
+			password: new Password(initObject.personalData.password as string),
 			firstname: initObject.personalData.firstname,
 			lastname: initObject.personalData.lastname,
 			email: new Email(initObject.personalData.email),
-			birthdate: new UserBirthDate(initObject.personalData.birthdate),
+			birthdate: new UserBirthDate(initObject.personalData.birthdate as string),
 			sex: initObject.personalData.sex,
 		};
 		this.configurationData = initObject.configurationData;
 		this.administrativeData = initObject.administrativeData;
-		this.profiles = initObject.profiles;
 	}
 
 	/**
@@ -49,28 +47,6 @@ export class User extends Entity {
 		return `${this.personalData.firstname} ${this.personalData.lastname}`;
 	}
 
-	/**
-	 * * Return the new money amount when a spend is made, also recalculate the new daily spend
-	 * @param cost cost or cant of the spend
-	 */
-	public spend(cost: number): number {
-		this.administrativeData.money -= cost;
-		let newDailySpend =
-			(this.administrativeData.daily_spend * this.administrativeData.daily_travels + cost) /
-			this.administrativeData.daily_travels;
-		this.administrativeData.daily_spend = newDailySpend;
-		return newDailySpend;
-	}
-
-	/**
-	 * * Return the new money amount when a pay is made to the bag of the user
-	 * @param pay
-	 */
-	public payment(pay: number): number {
-		this.administrativeData.money += pay;
-		return this.administrativeData.money;
-	}
-
 	public toPrimitives(): UserJsonDocument {
 		return {
 			_id: this._id.toString(),
@@ -80,8 +56,31 @@ export class User extends Entity {
 				firstname: this.personalData.firstname,
 				lastname: this.personalData.lastname,
 				email: this.personalData.email.toString(),
-				birthdate: this.personalData.birthdate.toString(),
+				birthdate: this.personalData.birthdate.toUTC(this.configurationData?.timezone || ''),
 				sex: this.personalData.sex,
+				biography: this.personalData.biography,
+				address: this.personalData.address,
+				photo: this.personalData.photo,
+			},
+			administrativeData: this.administrativeData,
+			configurationData: this.configurationData,
+		};
+	}
+
+	public toEntity(): UserJsonDocument {
+		return {
+			_id: this._id.toString(),
+			personalData: {
+				username: this.personalData.username,
+				firstname: this.personalData.firstname,
+				lastname: this.personalData.lastname,
+				email: this.personalData.email.toString(),
+				birthdate: this.personalData.birthdate.toTimeZone(this.configurationData?.timezone || ''),
+				age: this.personalData.birthdate.calculateAge(),
+				sex: this.personalData.sex,
+				biography: this.personalData.biography,
+				address: this.personalData.address,
+				photo: this.personalData.photo,
 			},
 			administrativeData: this.administrativeData,
 			configurationData: this.configurationData,

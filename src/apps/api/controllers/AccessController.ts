@@ -1,8 +1,8 @@
-import { verify } from '@contexts/ClientAttention/Users/infraestructure/PassportJWT';
-import { UserAccessService } from '@contexts/ClientAttention/Users/services/UserAccessService';
 import { Request, Response } from 'express';
 import { Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
 import { Inject } from 'typedi';
+import { verify } from '../../../contexts/ClientAttention/Users/infraestructure/PassportJWT';
+import { UserAccessService } from '../../../contexts/ClientAttention/Users/services/UserAccessService';
 
 @Controller('/auth')
 export class AccessController {

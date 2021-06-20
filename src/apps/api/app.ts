@@ -3,12 +3,12 @@
 //Libraries
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import ducentrace from 'ducentrace';
 import express, { Application } from 'express';
 import { Server } from 'http';
 import passport from 'passport';
 //Shared context domain implematations
 import { Logger } from '../../contexts/shared/infraestructure/Logger';
+import ducentrace from '../../contexts/shared/infraestructure/Tracer';
 // bootstrapping functions
 import { connect } from './config/connections';
 import { setContainer } from './config/container';
@@ -75,7 +75,7 @@ export class App {
 		let server = this.app.listen(this.app.get('port'), '0.0.0.0');
 		server.on('listening', async () => {
 			let address: any = server.address();
-			this.logger.log(`🚀 Listening on http://${address.address}:${address.port}`, { color: 'warning', type: 'server' });
+			this.logger.launch(`🚀 Listening on http://${address.address}:${address.port}`);
 		});
 	}
 }

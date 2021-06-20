@@ -36,10 +36,7 @@ export class MongoDBRepoitory implements Repository {
 				useUnifiedTopology: true,
 				useNewUrlParser: true,
 			});
-			this.logger.log(`connected to database: ${this.database.host}/${this.database.database}`, {
-				type: 'database',
-				color: 'success',
-			});
+			this.logger.connection(`connected to database: ${this.database.host}/${this.database.database}`);
 		} catch (error) {
 			console.log(error);
 			throw new GeneralError('Error on database connection');
@@ -127,7 +124,7 @@ export class MongoDBMultiTenantRepository extends MongoDBRepoitory implements Mu
 		try {
 			this.database.database = database;
 			con = await MongoClient.connect(this.database.host);
-			this.logger.log(`connected to ${this.database.database}`, { type: 'database', color: 'system' });
+			this.logger.connection(`connected to ${this.database.database}`);
 			this.connectionPool[database] = con;
 		} catch (error) {
 			throw new GeneralError('Error on database connection');
@@ -157,7 +154,7 @@ export class MongoDBMultiTenantRepository extends MongoDBRepoitory implements Mu
 		try {
 			for (const key in this.connectionPool) {
 				await this.connectionPool[key].end();
-				this.logger.log(`connection closed to ${key} database`, { type: 'database', color: 'system' });
+				this.logger.connection(`connection closed to ${key} database`);
 			}
 		} catch (error) {
 			throw new GeneralError('Error closing the connections');

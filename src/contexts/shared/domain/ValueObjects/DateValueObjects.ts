@@ -1,31 +1,41 @@
-import { InvalidArgument } from "../Errors/Errors";
+import { isValid } from 'date-fns';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { InvalidArgument } from '../Errors/Errors';
 
-export abstract class DateValueObject{
+export abstract class DateValueObject {
 	public value: Date;
 
 	constructor(value: string) {
 		this.validate(value);
 		this.value = new Date(value);
 	}
-	private validate(value: string): void{
-		if (!value.includes('-')) throw new InvalidArgument('The format of the date is not correct');
 
-		let isValid = true;
-		let year = parseInt(value.split('-')[0]);
-		let month = parseInt(value.split('-')[1]);
-		let day = parseInt(value.split('-')[2]);
-
-		if(isNaN(year) || isNaN(month) || isNaN(day)) isValid = false;
-
-		if( (year < 1900) || (year > 2050) || (month < 1) || (month > 12) || (day < 1) || (day > 31) )
-			isValid = false;
-		else {
-			if((year%4 != 0) && (month == 2) && (day > 28)) isValid = false;
-			else if((year%4 == 0) && (month==2) && (day>29)) isValid = false;
-			else if(((month == 4) || (month == 6) || (month == 9) || (month==11)) && (day>30))isValid = false;
-		}
-		if(!isValid) throw new InvalidArgument('The format of the date is not correct');
+	/**
+	 *
+	 * * Validate the format of the date
+	 */
+	private validate(value: string): void {
+		if (!isValid(new Date(value))) throw new InvalidArgument('The format of the date is not correct');
 	}
+
+	/**
+	 * * Convert a zoned date to an utc date to standardize the dates
+	 * @param tz
+	 * @returns Date utc hour
+	 */
+	public toUTC(tz: string): Date {
+		return zonedTimeToUtc(this.value, tz);
+	}
+
+	/**
+	 * * Convert an UTC date to zoned date for show it to the client
+	 * @param tz
+	 * @returns Date zoned hour
+	 */
+	public toTimeZone(tz: string): Date {
+		return utcToZonedTime(this.value, tz);
+	}
+
 	public toString() {
 		return this.value.toISOString();
 	}

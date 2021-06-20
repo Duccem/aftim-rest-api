@@ -15,6 +15,7 @@ export abstract class Entity {
 	}
 
 	public abstract toPrimitives(): any;
+	public abstract toEntity(): any;
 	public static getPrimitive(): any {
 		return Entity.name;
 	}

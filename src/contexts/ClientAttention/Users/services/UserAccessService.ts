@@ -1,11 +1,11 @@
-import { User } from '../domain/User';
-import { UserCreatedDomainEvent } from '../domain/DomainEvents/UserCreatedDomainEvent';
+import { Inject, Service } from 'typedi';
+import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
 import { BadRequest, Unauthorized } from '../../../shared/domain/Errors/Errors';
 import { Repository } from '../../../shared/domain/Repositories/Repository';
-import { UserJsonDocument } from '../domain/Types/UserJsonDocument';
-import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
+import { UserCreatedDomainEvent } from '../domain/DomainEvents/UserCreatedDomainEvent';
 import { Auth } from '../domain/Interfaces/Auth';
-import { Inject, Service } from 'typedi';
+import { UserJsonDocument } from '../domain/Types/UserJsonDocument';
+import { User } from '../domain/User';
 
 /**
  * Uses cases of authentication of users, login, signup and log outh
@@ -37,7 +37,7 @@ export class UserAccessService {
 		user.record(userCreatedEvent);
 		await this.repository.insert('user', user.toPrimitives());
 		await this.eventBus.publish(user.pullDomainEvents());
-		return this.auth.formatResponse(user.toPrimitives());
+		return this.auth.formatResponse(user.toEntity());
 	}
 
 	public async login(identifier: string, password: string): Promise<UserJsonDocument> {
@@ -55,7 +55,7 @@ export class UserAccessService {
 
 		if (!valid) throw new Unauthorized('Oops! incorrect password');
 
-		return this.auth.formatResponse(user.toPrimitives());
+		return this.auth.formatResponse(user.toEntity());
 	}
 
 	public log() {

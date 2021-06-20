@@ -1,18 +1,16 @@
 //Libraries
-import { createPool, Pool } from 'mysql2/promise';
+import { Entity } from '@contexts/shared/domain/Entity';
+import { Constructor } from '@contexts/shared/domain/Types/Nulleable';
 import { createNamespace, getNamespace } from 'continuation-local-storage';
 import { NextFunction, Request, Response } from 'express';
-
-//Personal imports
-import { Repository, MultiTenantRepository } from '../../../domain/Repositories/Repository';
+import { createPool, Pool } from 'mysql2/promise';
+import { GeneralError } from '../../../domain/Errors/Errors';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
-import { JsonDocument } from '../../../domain/Types/JsonDocument';
-import { Nulleable } from '../../../domain/Types/Nulleable';
+//Personal imports
+import { MultiTenantRepository, Repository } from '../../../domain/Repositories/Repository';
 import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
 import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
-import { GeneralError } from '../../../domain/Errors/Errors';
 import { Logger } from '../../../infraestructure/Logger';
-
 //Own context
 import { MySQLQueryMaker } from './MySQLQueryMaker';
 
@@ -36,7 +34,7 @@ export class MySQLRepository implements Repository {
 	 */
 	public async endConnection(): Promise<void> {
 		if (this.connection) await this.connection.end();
-		this.logger.log(`connection closed`, { type: 'database', color: 'system' });
+		this.logger.info(`connection closed`);
 	}
 
 	/**
@@ -53,29 +51,33 @@ export class MySQLRepository implements Repository {
 		if (this.connection) return this.connection;
 		try {
 			this.connection = createPool(this.database);
-			this.logger.log(`connected to ${this.database.database}`, { type: 'database', color: 'system' });
+			this.logger.info(`connected to ${this.database.database}`);
 		} catch (error) {
 			throw new GeneralError('Error on database connection');
 		}
 		return this.connection;
 	}
 
-	public async list<T extends JsonDocument>(model: string, options?: ConsulterOptions): Promise<Array<T>> {
-		let sql = this.query.findMany(model, options);
-		this.logger.log(sql, { type: 'database', color: 'system' });
-		let data: any = await this.getConnection().query(sql);
-		let response = JSON.parse(JSON.stringify(data[0]));
-		return response;
-	}
+	public list = <T extends Entity>(Model: Constructor<T>) => {
+		return async (options: ConsulterOptions): Promise<Array<T>> => {
+			let sql = this.query.findMany(Model.name, options);
+			this.logger.info(sql);
+			let data: any = await this.getConnection().query(sql);
+			let response = JSON.parse(JSON.stringify(data[0]));
+			return response;
+		};
+	};
 
-	public async get<T extends JsonDocument>(model: string, id: number | string, options?: ConsulterOptions): Promise<T> {
-		let sql = this.query.findOne(model, id, options);
-		this.logger.log(sql, { type: 'database', color: 'system' });
-		let data: any = await this.getConnection().query(sql);
-		if (!data[0][0]) return <T>{};
-		let response = JSON.parse(JSON.stringify(data[0][0]));
-		return response;
-	}
+	public get = <T extends Entity>(Model: Constructor<T>) => {
+		return async (id: number | string, options?: ConsulterOptions): Promise<T> => {
+			let sql = this.query.findOne(Model.name, id, options);
+			this.logger.info(sql);
+			let data: any = await this.getConnection().query(sql);
+			if (!data[0][0]) return <T>{};
+			let response = JSON.parse(JSON.stringify(data[0][0]));
+			return response;
+		};
+	};
 
 	public async insert(model: string, data: any): Promise<any> {
 		let inserted: any = await this.getConnection().query(`INSERT INTO ${model} set ?`, [data]);
@@ -93,7 +95,7 @@ export class MySQLRepository implements Repository {
 	}
 
 	public async execute(query: any): Promise<Array<any>> {
-		this.logger.log(query, { type: 'database', color: 'system' });
+		this.logger.info(query);
 		let data: any = await this.getConnection().query(query);
 		let response = JSON.parse(JSON.stringify(data[0]));
 		return response;
@@ -130,7 +132,7 @@ export class MySQLMultiTenantRepository extends MySQLRepository implements Multi
 		try {
 			this.database.database = database;
 			con = createPool(this.database);
-			this.logger.log(`connected to ${this.database.database}`, { type: 'database', color: 'system' });
+			this.logger.info(`connected to ${this.database.database}`);
 			this.connectionPool[database] = con;
 		} catch (error) {
 			throw new GeneralError('Error on database connection');
@@ -160,7 +162,7 @@ export class MySQLMultiTenantRepository extends MySQLRepository implements Multi
 		try {
 			for (const key in this.connectionPool) {
 				await this.connectionPool[key].end();
-				this.logger.log(`connection closed to ${key} database`, { type: 'database', color: 'system' });
+				this.logger.log(`connection closed to ${key} database`);
 			}
 		} catch (error) {
 			throw new GeneralError('Error closing the connections');

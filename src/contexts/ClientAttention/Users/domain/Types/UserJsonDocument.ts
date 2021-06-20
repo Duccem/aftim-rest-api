@@ -1,44 +1,42 @@
-import { JsonDocument } from "../../../../shared/domain/Types/JsonDocument";
-import { Email } from "../ValueObjects/Email";
-import { Password } from "../ValueObjects/Password";
-import { UserBirthDate } from "../ValueObjects/UserBirthDate";
+import { JsonDocument } from '../../../../shared/domain/Types/JsonDocument';
+import { Email } from '../ValueObjects/Email';
+import { Password } from '../ValueObjects/Password';
+import { UserBirthDate } from '../ValueObjects/UserBirthDate';
 
 export type UserJsonDocument = JsonDocument & {
 	personalData: {
 		username: string;
-		password:  string;
+		password?: string;
 		email: string;
 		firstname: string;
 		lastname: string;
-		birthdate: string;
+		birthdate: string | Date;
 		sex: string;
 		age?: number;
-		adress?: string;
+		address?: string;
 		photo?: string;
+		biography?: string;
 	};
-	configurationData: {
-		tenantId: string;
+	configurationData?: {
 		timezone: string;
 		lang: string;
+		theme: string;
 	};
-	administrativeData: {
-		money: number,
-		travels: number,
-		daily_travels: number,
-		daily_spend: number,
+	administrativeData?: {
+		tenantId?: string;
+		skillTreeId?: string;
+		profileIds?: string[];
 	};
-	profiles?:string[],
-	token?: string
+	token?: string;
 };
 
-export interface UserAdministrativeData  {
-	money: number,
-	travels: number,
-	daily_travels: number,
-	daily_spend: number,
+export interface UserAdministrativeData {
+	tenantId?: string;
+	skillTreeId?: string;
+	profileIds?: string[];
 }
 
-export interface UserPersonalData  {
+export interface UserPersonalData {
 	username: string;
 	password: Password;
 	email: Email;
@@ -47,13 +45,13 @@ export interface UserPersonalData  {
 	birthdate: UserBirthDate;
 	sex: string;
 	age?: number;
-	adress?: string;
+	address?: string;
 	photo?: string;
+	biography?: string;
 }
 
-
-export interface UserConfigurationData  {
-	tenantId: string;
+export interface UserConfigurationData {
 	timezone: string;
 	lang: string;
+	theme: string;
 }

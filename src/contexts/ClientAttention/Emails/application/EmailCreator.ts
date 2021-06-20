@@ -1,20 +1,19 @@
 //shared imports
-import { Repository } from '../../../shared/domain/Repositories/Repository';
+import { Inject, Service } from 'typedi';
 import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
-
+import { Repository } from '../../../shared/domain/Repositories/Repository';
+import { EmailSendedDomainEvent } from '../domain/DomainEvents/EmailSendedDomainEvent';
 //Own context imports
 import { Emails } from '../domain/Email';
 import { Sender } from '../domain/Sender';
 import { EmailJsonDocument } from '../domain/Types/EmailJsonDocument';
-import { EmailSendedDomainEvent } from '../domain/DomainEvents/EmailSendedDomainEvent';
-import { Inject, Service } from 'typedi';
 
-@Service("EmailCreator")
+@Service('EmailCreator')
 export class EmailCreator {
 	constructor(
-		@Inject("Repository") private repoository: Repository, 
-		@Inject("EventBus") private bus: EventBus, 
-		@Inject("EmailSender") private sender: Sender
+		@Inject('Repository') private repoository: Repository,
+		@Inject('EventBus') private bus: EventBus,
+		@Inject('EmailSender') private sender: Sender
 	) {}
 
 	public async sendRegisterEmail(data: any) {
@@ -27,7 +26,7 @@ export class EmailCreator {
 
 		const email = new Emails(dataEmail);
 		await Promise.all([
-			this.sender.send(email.reciver, email.subject, email.content),
+			//this.sender.send(email.reciver, email.subject, email.content),
 			this.repoository.insert('emails', email.toPrimitives()),
 		]);
 		const emailSendedEvent = new EmailSendedDomainEvent({
