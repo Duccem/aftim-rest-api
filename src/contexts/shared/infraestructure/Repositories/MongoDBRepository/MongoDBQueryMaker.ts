@@ -34,7 +34,7 @@ export class MongoDBQueryMaker implements QueryMaker {
 		};
 	}
 	public count(model: string, options: ConsulterOptions): any {
-		let conditional = this.conditionalMaker(options.where);
+		let conditional = this.conditionalMaker(model, options.where);
 		return {
 			conditional,
 		};

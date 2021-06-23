@@ -55,7 +55,7 @@ export class MongoDBRepoitory implements Repository {
 		return async (options: ConsulterOptions): Promise<Array<T>> => {
 			let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(Model.name, options);
 
-			let data: Array<any> = await this.getConnection(Model.name)
+			let data: Array<any> = await this.getConnection(Model.name.toLowerCase())
 				.find(conditional, fields)
 				.skip(offset)
 				.limit(limit)
@@ -68,7 +68,7 @@ export class MongoDBRepoitory implements Repository {
 
 	public get<T extends Entity>(Model: Constructor<T>) {
 		return async (id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>> => {
-			let { conditional, fields } = this.query.findOne(Model.name, id, options);
+			let { conditional, fields } = this.query.findOne(Model.name.toLowerCase(), id, options);
 			let data: any = (await this.getConnection(Model.name).find(conditional, fields).limit(1).toArray()).shift();
 			return data ? new Model(data) : null;
 		};

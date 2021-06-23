@@ -1,5 +1,4 @@
-import { v4, validate } from "uuid";
-
+import { v4, validate } from 'uuid';
 
 export class UuidValueObject {
 	readonly value: string;
@@ -14,8 +13,8 @@ export class UuidValueObject {
 		return new UuidValueObject(v4());
 	}
 
-	public static validateID(id:any): boolean {
-		if(isNaN(id) || id == 0) return false;
+	public static validateID(id: any): boolean {
+		if (!validate(id)) return false;
 		return true;
 	}
 

@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
-import { Controller, Get, Post, Req, Res, UseBefore } from 'routing-controllers';
+import { Controller, Get, Post, Req, Res, UseAfter, UseBefore } from 'routing-controllers';
 import { Inject } from 'typedi';
 import { verify } from '../../../contexts/ClientAttention/Users/infraestructure/PassportJWT';
 import { UserAccessService } from '../../../contexts/ClientAttention/Users/services/UserAccessService';
+import { RESTErrorHandler } from '../../../contexts/shared/infraestructure/Errors/RESTErrorHandler';
 
 @Controller('/auth')
+@UseAfter(RESTErrorHandler)
 export class AccessController {
 	constructor(@Inject('UserAccessService') private readonly userAccessService: UserAccessService) {}
 	@Post('/signup')

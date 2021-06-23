@@ -9,5 +9,6 @@ export const registerRoutes = (app: Application) => {
 	useExpressServer(app, {
 		routePrefix: '/api',
 		controllers: [AccessController],
+		defaultErrorHandler: false,
 	});
 };

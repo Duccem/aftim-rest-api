@@ -24,7 +24,8 @@ export class UserAccessService {
 	 * @param actor The data of the new user
 	 */
 	public async signup(actor: UserJsonDocument): Promise<UserJsonDocument> {
-		let count = await this.repository.count('user', { where: { username: actor.personalData.username } });
+		let count = await this.repository.count('user', { where: { 'personalData.username': actor.personalData.username } });
+		console.log(count);
 
 		if (count > 0) throw new BadRequest('The email is already in use');
 		const user = new User(actor);
@@ -44,8 +45,8 @@ export class UserAccessService {
 		const users: User[] = await this.repository.list<User>(User)({
 			where: {
 				or: {
-					username: identifier,
-					email: identifier,
+					'personalData.username': identifier,
+					'personalData.email': identifier,
 				},
 			},
 		});

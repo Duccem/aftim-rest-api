@@ -21,6 +21,8 @@ export class User extends Entity {
 			email: new Email(initObject.personalData.email),
 			birthdate: new UserBirthDate(initObject.personalData.birthdate as string),
 			sex: initObject.personalData.sex,
+			address: initObject.personalData.address,
+			biography: initObject.personalData.biography,
 		};
 		this.configurationData = initObject.configurationData;
 		this.administrativeData = initObject.administrativeData;
