@@ -1,11 +1,11 @@
 import { Inject, Service } from 'typedi';
-
-import { Repository } from '../../../shared/domain/Repositories/Repository';
 import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
-import { ProfileJsonDocument } from '../domain/types/ProfileJsonDocument';
 import { BadRequest, ElementNotFound, InvalidID } from '../../../shared/domain/Errors/Errors';
-import { Profile } from '../domain/Profile';
+import { Repository } from '../../../shared/domain/Repositories/Repository';
 import { UuidValueObject } from '../../../shared/domain/ValueObjects/UuidValueObject';
+import { Profile } from '../domain/Profile';
+import { ProfileJsonDocument } from '../domain/types/ProfileJsonDocument';
+
 @Service('ProfilesService')
 export class ProfilesService {
 	constructor(
@@ -18,30 +18,31 @@ export class ProfilesService {
 		if (count > 0) throw new BadRequest('This profile is already created, please rename the profile');
 
 		const newProfile = new Profile(profile);
-
 		await this.repository.insert('profile', newProfile.toPrimitives());
 
-		return newProfile.toPrimitives();
+		return newProfile.toEntity();
 	}
 
-	public async updateProfile(profileId: string, profileUpdate: ProfileJsonDocument): Promise<ProfileJsonDocument> {
+	public async updateProfile(profileId: string, profileUpdate: ProfileJsonDocument): Promise<ProfileJsonDocument | undefined> {
 		let profile = await this.repository.exists('profile', profileId);
 		if (!profile) throw new ElementNotFound('This profile doesn`t exists');
 
 		await this.repository.update('profile', profileId, profileUpdate);
 
-		let updatedProfile = await this.repository.get<ProfileJsonDocument>('profile', profileId);
-		return updatedProfile;
+		let updatedProfile = await this.repository.get<Profile>(Profile)(profileId);
+		return updatedProfile?.toEntity();
 	}
 
 	public async listProfiles(): Promise<Array<ProfileJsonDocument>> {
-		return await this.repository.list('profile');
+		let data = await this.repository.list<Profile>(Profile)({});
+		return data[0]?.toArray(data) || [];
 	}
 
-	public async getProfile(profileId: string): Promise<ProfileJsonDocument> {
+	public async getProfile(profileId: string): Promise<ProfileJsonDocument | undefined> {
 		let validId = UuidValueObject.validateID(profileId);
 		if (!validId) throw new InvalidID('The given id has an incorrect format');
-
-		return await this.repository.get('profile', profileId);
+		let profile = await this.repository.get<Profile>(Profile)(profileId);
+		console.log(profile);
+		return profile?.toEntity();
 	}
 }

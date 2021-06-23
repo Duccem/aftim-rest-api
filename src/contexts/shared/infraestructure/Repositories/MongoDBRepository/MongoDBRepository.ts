@@ -69,7 +69,9 @@ export class MongoDBRepoitory implements Repository {
 	public get<T extends Entity>(Model: Constructor<T>) {
 		return async (id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>> => {
 			let { conditional, fields } = this.query.findOne(Model.name.toLowerCase(), id, options);
-			let data: any = (await this.getConnection(Model.name).find(conditional, fields).limit(1).toArray()).shift();
+			let data: any = (
+				await this.getConnection(Model.name.toLowerCase()).find(conditional, fields).limit(1).toArray()
+			).shift();
 			return data ? new Model(data) : null;
 		};
 	}
