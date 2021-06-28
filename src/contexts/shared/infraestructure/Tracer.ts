@@ -141,7 +141,7 @@ export class NetLogger {
 		let status = this.status(response);
 		let lenght = this.lenght(response);
 		let ip = this.ip(request);
-		let log = `Responsed to ${url} requested by ${ip} with status ${status} (${lenght}) bytes in ${time} miliseconds`;
+		let log = `Responded to ${url} requested by ${ip} with status ${status} (${lenght}) bytes in ${time} miliseconds`;
 		this.logger.response(log);
 	}
 }
