@@ -1,12 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { Logger } from '../../infraestructure/Logger';
-import { pick, omit } from 'lodash'
-
-
 export type ErrorExtension = {
 	code: any;
 	exception: any;
-}
+};
 
 /**
  * General error handle class
@@ -20,13 +15,13 @@ export class GeneralError extends Error {
 	 * @param message The message message to console
 	 * @param code The code of the error
 	 */
-	constructor(message?: string, code?:number, exception?: any) {
+	constructor(message?: string, code?: number, exception?: any) {
 		super();
 		this.message = message || '';
 		this.extensions = {
 			code: code || 0,
-			exception: exception || null
-		}
+			exception: exception || null,
+		};
 	}
 	public getCode(): number {
 		if (this instanceof BadRequest) return this.extensions.code || 400;
@@ -49,7 +44,6 @@ export class GeneralError extends Error {
 		return 'Internal Server Error';
 	}
 }
-
 
 /**
  * Class to code 400 Invalid ID or BadRequest general
