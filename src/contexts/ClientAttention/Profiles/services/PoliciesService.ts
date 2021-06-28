@@ -1,6 +1,7 @@
 import { Inject, Service } from 'typedi';
 import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
-import { BadRequest, ElementNotFound, InvalidID } from '../../../shared/domain/Errors/Errors';
+import { Entity } from '../../../shared/domain/Entity';
+import { BadRequest, ElementNotFound, InvalidID } from '../../../shared/domain/Http/Errors';
 import { Repository } from '../../../shared/domain/Repositories/Repository';
 import { UuidValueObject } from '../../../shared/domain/ValueObjects/UuidValueObject';
 import { Profile } from '../domain/Profile';
@@ -14,7 +15,7 @@ export class ProfilesService {
 	) {}
 
 	public async createProfile(profile: ProfileJsonDocument): Promise<ProfileJsonDocument> {
-		let count = await this.repository.count('profile', { where: { name: profile.name } });
+		let count = await this.repository.count<Profile>(Profile)({ where: { name: profile.name } });
 		if (count > 0) throw new BadRequest('This profile is already created, please rename the profile');
 
 		const newProfile = new Profile(profile);
@@ -33,9 +34,15 @@ export class ProfilesService {
 		return updatedProfile?.toEntity();
 	}
 
-	public async listProfiles(): Promise<Array<ProfileJsonDocument>> {
-		let data = await this.repository.list<Profile>(Profile)({});
-		return data[0]?.toArray(data) || [];
+	public async listProfiles(options?: any): Promise<{ data: Array<ProfileJsonDocument>; count: number }> {
+		let [data, count] = await Promise.all([
+			this.repository.list<Profile>(Profile)(options),
+			this.repository.count<Profile>(Profile)(options),
+		]);
+		return {
+			data: Entity.toArray(data) || [],
+			count,
+		};
 	}
 
 	public async getProfile(profileId: string): Promise<ProfileJsonDocument | undefined> {

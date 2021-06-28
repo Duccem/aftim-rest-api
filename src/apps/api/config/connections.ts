@@ -1,7 +1,7 @@
 import { Server } from 'http';
 import { CacheBucket } from '../../../contexts/shared/domain/Cache/CacheBucket';
 import { EventBus } from '../../../contexts/shared/domain/DomainEvents/EventBus';
-import { GeneralError } from '../../../contexts/shared/domain/Errors/Errors';
+import { GeneralError } from '../../../contexts/shared/domain/Http/Errors';
 import { Repository } from '../../../contexts/shared/domain/Repositories/Repository';
 import { RedisCacheBucket } from '../../../contexts/shared/infraestructure/Cache/RedisCacheBucket';
 import { RabbitMQEventBus } from '../../../contexts/shared/infraestructure/EventBus/RabbitMQEventBus/RabbitMQEventBus';

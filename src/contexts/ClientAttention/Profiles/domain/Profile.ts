@@ -34,8 +34,4 @@ export class Profile extends Entity {
 			policies: this.policies,
 		};
 	}
-
-	public toArray(profiles: Profile[]): Array<ProfileJsonDocument> {
-		return profiles.map((p) => p.toEntity());
-	}
 }

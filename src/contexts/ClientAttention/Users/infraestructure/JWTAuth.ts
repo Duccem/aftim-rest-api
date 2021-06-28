@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { set } from 'lodash';
-import { Forbidden, Unauthorized } from '../../../shared/domain/Errors/Errors';
+import { Forbidden, Unauthorized } from '../../../shared/domain/Http/Errors';
 import { Auth } from '../domain/Interfaces/Auth';
 import { UserJsonDocument } from '../domain/Types/UserJsonDocument';
 
@@ -11,7 +11,7 @@ export class JWTAuth implements Auth {
 	}
 	public formatResponse(user: UserJsonDocument): UserJsonDocument {
 		const userCodifiedToken = <UserJsonDocument>{};
-		set(userCodifiedToken, 'profiles', user.profiles);
+		set(userCodifiedToken, 'profiles', user.administrativeData?.profileIds);
 		set(userCodifiedToken, '_id', user._id);
 		set(userCodifiedToken, 'administrativeData', user.administrativeData);
 		let token = jwt.sign(userCodifiedToken, this.secretKey, { expiresIn: 60 * 60 * 24 });

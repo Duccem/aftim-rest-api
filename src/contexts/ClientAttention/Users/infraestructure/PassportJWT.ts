@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { tokenKey } from '../../../../apps/api/config/keys';
-import { Unauthorized } from '../../../shared/domain/Errors/Errors';
+import { Unauthorized } from '../../../shared/domain/Http/Errors';
 import { UuidValueObject } from '../../../shared/domain/ValueObjects/UuidValueObject';
 import { UserJsonDocument } from '../domain/Types/UserJsonDocument';
 

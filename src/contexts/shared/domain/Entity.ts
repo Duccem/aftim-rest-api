@@ -16,5 +16,7 @@ export abstract class Entity {
 
 	public abstract toPrimitives(): any;
 	public abstract toEntity(): any;
-	public abstract toArray(entities: Entity[]): Array<any>;
+	public static toArray<T extends Entity>(entities: T[]): Array<any> {
+		return entities.map((e) => e.toEntity());
+	}
 }

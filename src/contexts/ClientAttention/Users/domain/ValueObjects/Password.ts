@@ -1,4 +1,4 @@
-import { InvalidArgument } from '../../../../shared/domain/Errors/Errors';
+import { InvalidArgument } from '../../../../shared/domain/Http/Errors';
 import { StringValueObject } from '../../../../shared/domain/ValueObjects/StringValueObject';
 import { Encript } from '../../../../shared/infraestructure/Encript';
 

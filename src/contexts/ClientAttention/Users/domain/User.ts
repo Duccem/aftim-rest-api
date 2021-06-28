@@ -88,8 +88,4 @@ export class User extends Entity {
 			configurationData: this.configurationData,
 		};
 	}
-
-	public toArray(users: User[]): Array<UserJsonDocument> {
-		return users.map((u) => u.toEntity());
-	}
 }

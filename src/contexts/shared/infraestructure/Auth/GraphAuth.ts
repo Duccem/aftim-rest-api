@@ -3,7 +3,7 @@ import { Inject } from 'typedi';
 import { Auth } from '../../../ClientAttention/Users/domain/Interfaces/Auth';
 import { AuthMiddleWare } from '../../domain/Auth/AuthMiddleware';
 import { RequestContext } from '../../domain/Auth/IResquest';
-import { Unauthorized } from '../../domain/Errors/Errors';
+import { Unauthorized } from '../../domain/Http/Errors';
 
 export class GraphAuth implements AuthMiddleWare, MiddlewareInterface<RequestContext> {
 	constructor(@Inject('Auth') private auth: Auth) {}

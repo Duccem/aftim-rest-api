@@ -1,5 +1,5 @@
-import { GeneralError } from '../domain/Errors/Errors';
 import bcrypt from 'bcryptjs';
+import { GeneralError } from '../domain/Http/Errors';
 
 /**
  * Class that work as interface of comunication with the authentication microservice

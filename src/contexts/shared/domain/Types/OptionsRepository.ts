@@ -3,19 +3,19 @@
  */
 export type ConsulterOptions = {
 	/** Limit of the records */
-	limit?: number,
+	limit?: string;
 	/** Page of the records to consult */
-	page?: number,
+	page?: string;
 	/** Columns or fields of the table or entity to get in the consult */
-	fields?: string[],
+	fields?: string;
 	/** Order of the array of records */
-	order?: string,
+	order?: string;
 	/** Field that work as key on the consult to order the records */
-	orderField?: string,
+	orderField?: string;
 	/** Object that contain the conditions of the consult */
-	where?: any,
+	where?: any;
 	/** Array of models relationed to the principal etity that are wanted on the consult*/
-	include?: IncludeOptions[],
+	include?: IncludeOptions[];
 };
 
 /**
@@ -23,9 +23,9 @@ export type ConsulterOptions = {
  */
 export type IncludeOptions = {
 	/** Name of the table to join */
-	name?: string,
+	name?: string;
 	/** Fields to join */
-	fields?: string[],
+	fields?: string[];
 	/** Join conditionals  */
-	where?: any,
+	where?: any;
 };

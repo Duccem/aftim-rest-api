@@ -1,6 +1,6 @@
 import { isValid } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
-import { InvalidArgument } from '../Errors/Errors';
+import { InvalidArgument } from '../Http/Errors';
 
 export abstract class DateValueObject {
 	public value: Date;

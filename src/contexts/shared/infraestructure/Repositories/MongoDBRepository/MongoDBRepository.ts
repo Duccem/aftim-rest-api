@@ -4,7 +4,7 @@ import { Query } from '@contexts/shared/domain/Repositories/Query';
 import { createNamespace, getNamespace } from 'continuation-local-storage';
 import { NextFunction, Request, Response } from 'express';
 import { Collection, MongoClient } from 'mongodb';
-import { GeneralError } from '../../../domain/Errors/Errors';
+import { GeneralError } from '../../../domain/Http/Errors';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
 //Personal Imports
 import { MultiTenantRepository, Repository } from '../../../domain/Repositories/Repository';
@@ -54,9 +54,9 @@ export class MongoDBRepoitory implements Repository {
 	public list = <T extends Entity>(Model: Constructor<T>) => {
 		return async (options: ConsulterOptions): Promise<Array<T>> => {
 			let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(Model.name, options);
-
+			console.log(limit, offset);
 			let data: Array<any> = await this.getConnection(Model.name.toLowerCase())
-				.find(conditional, fields)
+				.find(conditional, { fields })
 				.skip(offset)
 				.limit(limit)
 				.sort({ [`${orderField}`]: order })
@@ -73,6 +73,13 @@ export class MongoDBRepoitory implements Repository {
 				await this.getConnection(Model.name.toLowerCase()).find(conditional, fields).limit(1).toArray()
 			).shift();
 			return data ? new Model(data) : null;
+		};
+	}
+	public count<T extends Entity>(Model: Constructor<T>) {
+		return async (options?: ConsulterOptions): Promise<number> => {
+			let { conditional } = this.query.count(Model.name.toLowerCase(), options);
+			let count = await this.getConnection(Model.name.toLowerCase()).find(conditional).count();
+			return count;
 		};
 	}
 
@@ -93,12 +100,6 @@ export class MongoDBRepoitory implements Repository {
 
 	public async execute(model: string, query: Query): Promise<Array<any>> {
 		return await this.getConnection(model).aggregate(query).toArray();
-	}
-
-	public async count(model: string, options: ConsulterOptions): Promise<number> {
-		let { conditional } = this.query.count(model, options);
-		let count = await this.getConnection(model).find(conditional).count();
-		return count;
 	}
 
 	public async exists(model: string, id: string): Promise<boolean> {

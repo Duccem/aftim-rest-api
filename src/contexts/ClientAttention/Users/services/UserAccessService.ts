@@ -1,6 +1,6 @@
 import { Inject, Service } from 'typedi';
 import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
-import { BadRequest, Unauthorized } from '../../../shared/domain/Errors/Errors';
+import { BadRequest, Unauthorized } from '../../../shared/domain/Http/Errors';
 import { Repository } from '../../../shared/domain/Repositories/Repository';
 import { UserCreatedDomainEvent } from '../domain/DomainEvents/UserCreatedDomainEvent';
 import { Auth } from '../domain/Interfaces/Auth';
@@ -24,7 +24,7 @@ export class UserAccessService {
 	 * @param actor The data of the new user
 	 */
 	public async signup(actor: UserJsonDocument): Promise<UserJsonDocument> {
-		let count = await this.repository.count('user', { where: { 'personalData.username': actor.personalData.username } });
+		let count = await this.repository.count<User>(User)({ where: { 'personalData.username': actor.personalData.username } });
 		console.log(count);
 
 		if (count > 0) throw new BadRequest('The email is already in use');

@@ -7,17 +7,15 @@ const ARRAY_OPS = ['in', 'notIn'];
 export class MongoDBQueryMaker implements QueryMaker {
 	public findMany(model: string, options: ConsulterOptions = {}): any {
 		let fields: any = {};
-
-		if (options.fields) options.fields.forEach((field) => (fields[`${field}`] = 1));
-
+		if (options.fields) options.fields.split(',').forEach((field) => (fields[`${field}`] = 1));
 		let conditional = this.conditionalMaker(model, options.where);
 
 		//Return the object to make the query
 		return {
 			conditional,
-			limit: options.limit || 50,
+			limit: options.limit ? parseInt(options.limit) : 50,
 			orderField: options.orderField || '_id',
-			offset: options.page ? parseInt(options.page + '00') : 0,
+			offset: options.page ? (parseInt(options.page) - 1) * parseInt(options.limit || '50') : 0,
 			order: options.order ? options.order : 1,
 			fields: fields,
 		};
@@ -26,15 +24,15 @@ export class MongoDBQueryMaker implements QueryMaker {
 	public findOne(model: string, id: number | string, options: ConsulterOptions = {}): any {
 		let fields: any = {};
 
-		if (options.fields) options.fields.forEach((field) => (fields[`${field}`] = 1));
+		if (options.fields) options.fields.split('').forEach((field) => (fields[`${field}`] = 1));
 
 		return {
 			conditional: { _id: id },
 			fields: fields,
 		};
 	}
-	public count(model: string, options: ConsulterOptions): any {
-		let conditional = this.conditionalMaker(model, options.where);
+	public count(model: string, options?: ConsulterOptions): any {
+		let conditional = this.conditionalMaker(model, options?.where);
 		return {
 			conditional,
 		};
@@ -104,5 +102,6 @@ export class MongoDBQueryMaker implements QueryMaker {
 		if (op == 'lte') return { [`${key}`]: { $lte: value } };
 		if (op == 'in') return { [`${key}`]: { $in: value } };
 		if (op == 'notIn') return { [`${key}`]: { $nin: value } };
+		if (op == 'like') return { [`${key}`]: { $regex: value } };
 	}
 }

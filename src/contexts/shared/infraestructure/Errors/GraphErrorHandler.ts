@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 import Container from 'typedi';
-import { GeneralError } from '../../domain/Errors/Errors';
+import { GeneralError } from '../../domain/Http/Errors';
 import { Logger } from '../Logger';
 
 export const GraphErrorHandler = function (error: any): any {

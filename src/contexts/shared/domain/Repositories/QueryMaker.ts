@@ -1,4 +1,4 @@
-import { ConsulterOptions } from "../Types/OptionsRepository";
+import { ConsulterOptions } from '../Types/OptionsRepository';
 /**
  * Interface that define the methods that creates the queries and consults to the database
  */
@@ -24,7 +24,7 @@ export interface QueryMaker {
 	 * Count the records of one entity
 	 * @param options
 	 */
-	count(model: string, options: ConsulterOptions): any;
+	count(model: string, options?: ConsulterOptions): any;
 
 	/**
 	 * Parse on object to convert into a Consulter Options

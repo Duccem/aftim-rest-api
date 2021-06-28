@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
-import { ConsulterOptions } from '../Types/OptionsRepository';
-import { JsonDocument } from '../Types/JsonDocument';
-import { Nulleable, Constructor } from '../Types/Nulleable';
+import { NextFunction, Request, Response } from 'express';
 import { Entity } from '../Entity';
+import { Constructor, Nulleable } from '../Types/Nulleable';
+import { ConsulterOptions } from '../Types/OptionsRepository';
 
 /**
  * Interface of a Consulter type class that allow to consult and execute queries on a database
@@ -31,6 +30,14 @@ export interface Repository {
 	 * @returns An record, in relation to the model of the table
 	 */
 	get<T extends Entity>(Model: Constructor<T>): (id: number | string, options?: ConsulterOptions) => Promise<Nulleable<T>>;
+
+	/**
+	 * Method that count the number of records on a table
+	 * @param model Target table name
+	 * @param options The options of the consult
+	 * @returns The number of records
+	 */
+	count<T extends Entity>(Model: Constructor<T>): (options?: ConsulterOptions) => Promise<number>;
 
 	/**
 	 * Method that allow to insert a new record on a table
@@ -63,14 +70,6 @@ export interface Repository {
 	 * @returns An array of results in relation with the query
 	 */
 	execute(model: string, query: any): Promise<Array<any>>;
-
-	/**
-	 * Method that count the number of records on a table
-	 * @param model Target table name
-	 * @param options The options of the consult
-	 * @returns The number of records
-	 */
-	count(model: string, options?: ConsulterOptions): Promise<number>;
 
 	/**
 	 * Method tha verify if an index appears in the Database

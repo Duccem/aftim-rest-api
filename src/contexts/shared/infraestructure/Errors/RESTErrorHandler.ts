@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
 import Container from 'typedi';
 import { RequestTokenized } from '../../../shared/domain/Auth/IResquest';
-import { ErrorHandler } from '../../domain/Errors/ErrorHandler';
-import { GeneralError } from '../../domain/Errors/Errors';
+import { GeneralError } from '../../domain/Http/Errors';
+import { ErrorHandler } from '../../domain/Http/Handlers';
 import { Logger } from '../Logger';
 
 /**
