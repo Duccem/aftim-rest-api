@@ -3,6 +3,7 @@ import { Controller, Get, Post, Req, Res, UseAfter, UseBefore } from 'routing-co
 import { Inject } from 'typedi';
 import { verify } from '../../../contexts/ClientAttention/Users/infraestructure/PassportJWT';
 import { UserAccessService } from '../../../contexts/ClientAttention/Users/services/UserAccessService';
+import { Created, Success } from '../../../contexts/shared/domain/Http/Response';
 import { RESTErrorHandler } from '../../../contexts/shared/infraestructure/Errors/RESTErrorHandler';
 
 @Controller('/auth')
@@ -13,14 +14,14 @@ export class AccessController {
 	async signUp(@Req() req: Request, @Res() res: Response) {
 		let actor = req.body;
 		let responseBody = await this.userAccessService.signup(actor);
-		return res.status(200).json(responseBody);
+		return new Created(responseBody);
 	}
 
 	@Post('/login')
 	async login(@Req() req: Request, @Res() res: Response) {
 		let { username, password } = req.body;
 		let responseBody = await this.userAccessService.login(username, password);
-		return res.status(200).json(responseBody);
+		return new Success(responseBody);
 	}
 
 	@Get('/ping')
