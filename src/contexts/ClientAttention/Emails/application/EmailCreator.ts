@@ -1,7 +1,6 @@
 //shared imports
 import { Inject, Service } from 'typedi';
 import { EventBus } from '../../../shared/domain/DomainEvents/EventBus';
-import { Repository } from '../../../shared/domain/Repositories/Repository';
 import { EmailSendedDomainEvent } from '../domain/DomainEvents/EmailSendedDomainEvent';
 //Own context imports
 import { Emails } from '../domain/Email';
@@ -10,11 +9,7 @@ import { EmailJsonDocument } from '../domain/Types/EmailJsonDocument';
 
 @Service('EmailCreator')
 export class EmailCreator {
-	constructor(
-		@Inject('Repository') private repoository: Repository,
-		@Inject('EventBus') private bus: EventBus,
-		@Inject('EmailSender') private sender: Sender
-	) {}
+	constructor(@Inject('EventBus') private bus: EventBus, @Inject('EmailSender') private sender: Sender) {}
 
 	public async sendRegisterEmail(data: any) {
 		let dataEmail: EmailJsonDocument = {
@@ -27,7 +22,7 @@ export class EmailCreator {
 		const email = new Emails(dataEmail);
 		await Promise.all([
 			//this.sender.send(email.reciver, email.subject, email.content),
-			this.repoository.insert('emails', email.toPrimitives()),
+			//this.repoository.insert('emails', email.toPrimitives()),
 		]);
 		const emailSendedEvent = new EmailSendedDomainEvent({
 			entityId: email._id.toString(),

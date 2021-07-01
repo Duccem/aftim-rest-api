@@ -1,4 +1,5 @@
 import { DomainEvent } from './DomainEvents/DomainEvent';
+import { JsonDocument } from './Types/JsonDocument';
 export abstract class Entity {
 	private domainEvents: Array<DomainEvent>;
 
@@ -16,7 +17,7 @@ export abstract class Entity {
 
 	public abstract toPrimitives(): any;
 	public abstract toEntity(): any;
-	public static toArray<T extends Entity>(entities: T[]): Array<any> {
+	public static toArray<T extends Entity, D extends JsonDocument>(entities: T[]): Array<D> {
 		return entities.map((e) => e.toEntity());
 	}
 }

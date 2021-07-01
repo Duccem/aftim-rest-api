@@ -9,7 +9,7 @@ export interface QueryMaker {
 	 * @param option The options of the consult
 	 * @returns The object or string query
 	 */
-	findMany(model: string, options?: ConsulterOptions): any;
+	findMany(options?: ConsulterOptions): any;
 
 	/**
 	 * Make the query that consult one record of the database
@@ -18,13 +18,13 @@ export interface QueryMaker {
 	 * @param options The options of the consult
 	 * @return THe object or string query
 	 */
-	findOne(model: string, id: number | string, options?: ConsulterOptions): any;
+	findOne(id: number | string, options?: ConsulterOptions): any;
 
 	/**
 	 * Count the records of one entity
 	 * @param options
 	 */
-	count(model: string, options?: ConsulterOptions): any;
+	count(options?: ConsulterOptions): any;
 
 	/**
 	 * Parse on object to convert into a Consulter Options

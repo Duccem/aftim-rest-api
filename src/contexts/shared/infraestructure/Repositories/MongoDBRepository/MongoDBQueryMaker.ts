@@ -5,10 +5,10 @@ const SIMPLE_OPS = ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'like', 'notLike'];
 const ARRAY_OPS = ['in', 'notIn'];
 
 export class MongoDBQueryMaker implements QueryMaker {
-	public findMany(model: string, options: ConsulterOptions = {}): any {
+	public findMany(options: ConsulterOptions = {}): any {
 		let fields: any = {};
 		if (options.fields) options.fields.split(',').forEach((field) => (fields[`${field}`] = 1));
-		let conditional = this.conditionalMaker(model, options.where);
+		let conditional = this.conditionalMaker(options.where);
 
 		//Return the object to make the query
 		return {
@@ -21,7 +21,7 @@ export class MongoDBQueryMaker implements QueryMaker {
 		};
 	}
 
-	public findOne(model: string, id: number | string, options: ConsulterOptions = {}): any {
+	public findOne(id: number | string, options: ConsulterOptions = {}): any {
 		let fields: any = {};
 
 		if (options.fields) options.fields.split('').forEach((field) => (fields[`${field}`] = 1));
@@ -31,8 +31,8 @@ export class MongoDBQueryMaker implements QueryMaker {
 			fields: fields,
 		};
 	}
-	public count(model: string, options?: ConsulterOptions): any {
-		let conditional = this.conditionalMaker(model, options?.where);
+	public count(options?: ConsulterOptions): any {
+		let conditional = this.conditionalMaker(options?.where);
 		return {
 			conditional,
 		};
@@ -53,22 +53,22 @@ export class MongoDBQueryMaker implements QueryMaker {
 		return trueOptions;
 	}
 
-	private conditionalMaker(model: string, where?: any): any {
+	private conditionalMaker(where?: any): any {
 		if (!where) return {};
 		let $or = [];
 		let $and = [];
 		let conditions: any = {};
 
 		for (const key in where.and) {
-			$and.push(this.makeOperator(model, key, where.and[key]));
+			$and.push(this.makeOperator(key, where.and[key]));
 		}
 		for (const key in where.or) {
-			$or.push(this.makeOperator(model, key, where.or[key]));
+			$or.push(this.makeOperator(key, where.or[key]));
 		}
 
 		for (const key in where) {
 			if (key !== 'and' && key !== 'or') {
-				Object.assign(conditions, this.makeOperator(model, key, where[key]));
+				Object.assign(conditions, this.makeOperator(key, where[key]));
 			}
 		}
 
@@ -78,30 +78,25 @@ export class MongoDBQueryMaker implements QueryMaker {
 		return conditions;
 	}
 
-	private makeOperator(model: string, name: string, value: any): any {
+	private makeOperator(name: string, value: any): any {
 		//If the propery is an group object then make an another conditional expression
-		if (name == 'and' || name == 'or') return this.conditionalMaker(model, { [name]: value });
-
-		if (!name.includes('-')) return { [`${name}`]: value };
-
-		let parts = name.split('-');
-		let key = parts[1];
-		let op = parts[0];
-
+		if (name == 'and' || name == 'or') return this.conditionalMaker({ [name]: value });
+		if (typeof value == 'object') return { [name]: this.conditionalMaker(value) };
+		if (!SIMPLE_OPS.includes(name) && !ARRAY_OPS.includes(name)) return { [name]: value };
 		//Errors handling
-		if (!SIMPLE_OPS.includes(op) && !ARRAY_OPS.includes(op)) throw new Error(`El operador ${op} no es valido`);
-		if (SIMPLE_OPS.includes(op) && Array.isArray(value)) throw new Error(`El operador ${op} solo admite un solo valor`);
-		if (ARRAY_OPS.includes(op) && !Array.isArray(value)) throw new Error(`El operador ${op} requiere al menos 2 valores`);
+		//if (!SIMPLE_OPS.includes(name) && !ARRAY_OPS.includes(name)) throw new Error(`El operador ${name} no es valido`);
+		if (SIMPLE_OPS.includes(name) && Array.isArray(value)) throw new Error(`El operador ${name} solo admite un solo valor`);
+		if (ARRAY_OPS.includes(name) && !Array.isArray(value)) throw new Error(`El operador ${name} requiere al menos 2 valores`);
 
 		//Make the expression for the correspondient
-		if (op == 'eq') return { [`${key}`]: { $eq: value } };
-		if (op == 'ne') return { [`${key}`]: { $ne: value } };
-		if (op == 'gt') return { [`${key}`]: { $gt: value } };
-		if (op == 'gte') return { [`${key}`]: { $gte: value } };
-		if (op == 'lt') return { [`${key}`]: { $lt: value } };
-		if (op == 'lte') return { [`${key}`]: { $lte: value } };
-		if (op == 'in') return { [`${key}`]: { $in: value } };
-		if (op == 'notIn') return { [`${key}`]: { $nin: value } };
-		if (op == 'like') return { [`${key}`]: { $regex: value } };
+		if (name == 'eq') return { $eq: value };
+		if (name == 'ne') return { $ne: value };
+		if (name == 'gt') return { $gt: value };
+		if (name == 'gte') return { $gte: value };
+		if (name == 'lt') return { $lt: value };
+		if (name == 'lte') return { $lte: value };
+		if (name == 'in') return { $in: value };
+		if (name == 'notIn') return { $nin: value };
+		if (name == 'like') return { $regex: `/${value}/` };
 	}
 }

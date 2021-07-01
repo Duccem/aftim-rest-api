@@ -1,13 +1,21 @@
 import Container from 'typedi';
 import { Entity } from '../../../domain/Entity';
+import { Repository } from '../../../domain/Repositories/Repository';
 import { RepositoryConnection } from '../../../domain/Repositories/RepositoryConnection';
 import { RepositoryFactory } from '../../../domain/Repositories/RepositoryFactory';
+import { JsonDocument } from '../../../domain/Types/JsonDocument';
 import { Constructor } from '../../../domain/Types/Nulleable';
-import { MongoDBRepoitory } from './MongoDBRepository';
+import { MongoDBRepository } from './MongoDBRepository';
 
 export class MongoDBFactory implements RepositoryFactory {
-	create<T extends Entity>(Model: Constructor<T>) {
+	private repositories: { model: string; repository: Repository<any, any> }[] = [];
+	create<T extends Entity, D extends JsonDocument>(Model: Constructor<T>): Repository<T, D> {
+		let repo = this.repositories.find((r) => r.model == Model.name);
+		if (repo) return repo.repository;
+
 		let db = Container.get<RepositoryConnection>('Database');
-		return new MongoDBRepoitory(db, Model);
+		let repository = new MongoDBRepository<T, D>(db, Model);
+		this.repositories.push({ model: Model.name, repository });
+		return repository;
 	}
 }

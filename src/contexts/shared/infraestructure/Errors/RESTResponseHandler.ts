@@ -10,7 +10,6 @@ export class RESTResponseHandler implements InterceptorInterface {
 	 * @param content data returned
 	 */
 	intercept(action: Action, content: any): Response {
-		console.log(content);
 		if (content instanceof GeneralResponse) {
 			return action.response.status(content.getCode()).json({
 				code: content.getCode(),

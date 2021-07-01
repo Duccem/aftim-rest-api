@@ -1,5 +1,4 @@
 //Libraries
-import { Service } from 'typedi';
 import { Entity } from '../../../domain/Entity';
 import { Query } from '../../../domain/Repositories/Query';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
@@ -9,43 +8,45 @@ import { RepositoryConnection } from '../../../domain/Repositories/RepositoryCon
 import { JsonDocument } from '../../../domain/Types/JsonDocument';
 import { Constructor, Nulleable } from '../../../domain/Types/Nulleable';
 import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
+import { MongoDBDataMapper } from './MongoDBDataMapper';
 //Own context
 import { MongoDBQueryMaker } from './MongoDBQueryMaker';
 
 /**
  * Implement of the repository interface to MongoDB databases
  */
-@Service('Repository')
-export class MongoDBRepoitory<T extends Entity, D extends JsonDocument> implements Repository<T, D> {
+export class MongoDBRepository<T extends Entity, D extends JsonDocument> implements Repository<T, D> {
 	protected query: QueryMaker;
+	protected mapper: MongoDBDataMapper<T, D>;
 	public Model: Constructor<T>;
-	constructor(private db: RepositoryConnection, model: Constructor<T>) {
-		this.query = new MongoDBQueryMaker();
+	constructor(protected db: RepositoryConnection, model: Constructor<T>) {
 		this.Model = model;
+		this.query = new MongoDBQueryMaker();
+		this.mapper = new MongoDBDataMapper<T, D>(model);
 	}
-	private get modelName(): string {
+	protected get modelName(): string {
 		return this.Model?.name.toLowerCase() || '';
 	}
 
 	public async list(options: ConsulterOptions): Promise<Array<T>> {
-		let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(this.modelName, options);
-		let data: Array<any> = await this.db
+		let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(options);
+		let data: Array<D> = await this.db
 			.getConnection(this.modelName)
 			.find(conditional, { fields })
 			.skip(offset)
 			.limit(limit)
 			.sort({ [`${orderField}`]: order })
 			.toArray();
-		return this.mapArray(data);
+		return this.mapper.mapArray(data);
 	}
 
 	public async get(id: number | string, options?: ConsulterOptions): Promise<Nulleable<T>> {
-		let { conditional, fields } = this.query.findOne(this.modelName, id, options);
-		let data: any = (await this.db.getConnection(this.modelName).find(conditional, fields).limit(1).toArray()).shift();
-		return this.mapObject(data);
+		let { conditional, fields } = this.query.findOne(id, options);
+		let data: D = (await this.db.getConnection(this.modelName).find(conditional, fields).limit(1).toArray()).shift();
+		return this.mapper.mapObject(data);
 	}
 	public async count(options?: ConsulterOptions): Promise<number> {
-		let { conditional } = this.query.count(this.modelName, options);
+		let { conditional } = this.query.count(options);
 		let count = await this.db.getConnection(this.modelName).find(conditional).count();
 		return count;
 	}
@@ -72,14 +73,5 @@ export class MongoDBRepoitory<T extends Entity, D extends JsonDocument> implemen
 	public async exists(id: string): Promise<boolean> {
 		let result = await this.db.getConnection(this.modelName).indexExists(id);
 		return result;
-	}
-
-	private mapArray(data: Array<any>): Array<T> {
-		return data.map((element) => new this.Model(element));
-	}
-
-	private mapObject(data: any): Nulleable<T> {
-		new this.Model(data);
-		return null;
 	}
 }
