@@ -23,17 +23,17 @@ export type UserJsonDocument = JsonDocument & {
 		theme: string;
 	};
 	administrativeData?: {
-		tenantId?: string;
-		skillTreeId?: string;
-		profileIds?: string[];
+		tenant?: string;
+		skillTree?: string;
+		profiles?: string[] | object[];
 	};
 	token?: string;
 };
 
 export interface UserAdministrativeData {
-	tenantId?: string;
-	skillTreeId?: string;
-	profileIds?: string[];
+	tenant?: string;
+	skillTree?: string;
+	profiles?: string[] | object[];
 }
 
 export interface UserPersonalData {

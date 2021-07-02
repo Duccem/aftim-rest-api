@@ -1,6 +1,5 @@
-import { Queries } from '@contexts/shared/domain/Repositories/QueryType';
+import { Query } from '../../../../shared/domain/Repositories/Query';
 
-export interface QueriesUser extends Queries {
-	getDetailed: any[];
-	getExtended: any[];
+export interface QueriesUser {
+	login(identifier: string): Query;
 }

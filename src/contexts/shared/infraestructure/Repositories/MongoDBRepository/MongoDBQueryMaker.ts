@@ -1,10 +1,14 @@
+import { Entity } from '../../../domain/Entity';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
+import { JsonDocument } from '../../../domain/Types/JsonDocument';
+import { Constructor } from '../../../domain/Types/Nulleable';
 import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
 
 const SIMPLE_OPS = ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'like', 'notLike'];
 const ARRAY_OPS = ['in', 'notIn'];
 
-export class MongoDBQueryMaker implements QueryMaker {
+export class MongoDBQueryMaker<T extends Entity, D extends JsonDocument> implements QueryMaker<T, D> {
+	constructor(protected Model: Constructor<T>) {}
 	public findMany(options: ConsulterOptions = {}): any {
 		let fields: any = {};
 		if (options.fields) options.fields.split(',').forEach((field) => (fields[`${field}`] = 1));
@@ -83,8 +87,8 @@ export class MongoDBQueryMaker implements QueryMaker {
 		if (name == 'and' || name == 'or') return this.conditionalMaker({ [name]: value });
 		if (typeof value == 'object') return { [name]: this.conditionalMaker(value) };
 		if (!SIMPLE_OPS.includes(name) && !ARRAY_OPS.includes(name)) return { [name]: value };
+
 		//Errors handling
-		//if (!SIMPLE_OPS.includes(name) && !ARRAY_OPS.includes(name)) throw new Error(`El operador ${name} no es valido`);
 		if (SIMPLE_OPS.includes(name) && Array.isArray(value)) throw new Error(`El operador ${name} solo admite un solo valor`);
 		if (ARRAY_OPS.includes(name) && !Array.isArray(value)) throw new Error(`El operador ${name} requiere al menos 2 valores`);
 
@@ -97,6 +101,6 @@ export class MongoDBQueryMaker implements QueryMaker {
 		if (name == 'lte') return { $lte: value };
 		if (name == 'in') return { $in: value };
 		if (name == 'notIn') return { $nin: value };
-		if (name == 'like') return { $regex: `/${value}/` };
+		if (name == 'like') return { $regex: value, $options: 'i' };
 	}
 }

@@ -6,6 +6,7 @@ import { UserCreatedDomainEvent } from '../domain/DomainEvents/UserCreatedDomain
 import { Auth } from '../domain/Interfaces/Auth';
 import { UserJsonDocument } from '../domain/Types/UserJsonDocument';
 import { User } from '../domain/User';
+import { UserQueries } from '../infraestructure/Repository/Queries';
 
 /**
  * Uses cases of authentication of users, login, signup and log outh
@@ -39,14 +40,7 @@ export class UserAccessService {
 	}
 
 	public async login(identifier: string, password: string): Promise<UserJsonDocument> {
-		const users: User[] = await this.repository.list({
-			where: {
-				or: {
-					'personalData.username': identifier,
-					'personalData.email': identifier,
-				},
-			},
-		});
+		const users: User[] = await this.repository.execute(UserQueries.login(identifier));
 		if (!users[0]) throw new Unauthorized('User not found');
 		const user = users[0];
 		let valid = user.personalData.password.compare(password);

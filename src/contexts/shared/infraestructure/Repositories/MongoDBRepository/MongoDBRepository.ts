@@ -16,12 +16,12 @@ import { MongoDBQueryMaker } from './MongoDBQueryMaker';
  * Implement of the repository interface to MongoDB databases
  */
 export class MongoDBRepository<T extends Entity, D extends JsonDocument> implements Repository<T, D> {
-	protected query: QueryMaker;
+	protected query: QueryMaker<T, D>;
 	protected mapper: MongoDBDataMapper<T, D>;
 	public Model: Constructor<T>;
 	constructor(protected db: RepositoryConnection, model: Constructor<T>) {
 		this.Model = model;
-		this.query = new MongoDBQueryMaker();
+		this.query = new MongoDBQueryMaker<T, D>(model);
 		this.mapper = new MongoDBDataMapper<T, D>(model);
 	}
 	protected get modelName(): string {
@@ -30,6 +30,7 @@ export class MongoDBRepository<T extends Entity, D extends JsonDocument> impleme
 
 	public async list(options: ConsulterOptions): Promise<Array<T>> {
 		let { conditional, limit, orderField, order, offset, fields } = this.query.findMany(options);
+		console.log(conditional);
 		let data: Array<D> = await this.db
 			.getConnection(this.modelName)
 			.find(conditional, { fields })
@@ -67,7 +68,8 @@ export class MongoDBRepository<T extends Entity, D extends JsonDocument> impleme
 	}
 
 	public async execute(query: Query): Promise<Array<any>> {
-		return await this.db.getConnection(this.modelName).aggregate(query).toArray();
+		let data = await this.db.getConnection(this.modelName).aggregate(query).toArray();
+		return this.mapper.mapArray(data);
 	}
 
 	public async exists(id: string): Promise<boolean> {

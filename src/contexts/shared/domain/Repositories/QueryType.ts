@@ -1,3 +1,5 @@
+import { Query } from './Query';
+
 export interface Queries {
-	[element: string]: string | any;
+	[element: string]: Query;
 }

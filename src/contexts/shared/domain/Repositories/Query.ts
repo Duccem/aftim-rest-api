@@ -1,1 +1,1 @@
-export type Query = object[];
+export type Query = object[] | undefined;

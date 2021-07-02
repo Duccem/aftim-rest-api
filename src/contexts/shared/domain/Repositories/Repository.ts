@@ -2,6 +2,7 @@ import { Entity } from '../Entity';
 import { JsonDocument } from '../Types/JsonDocument';
 import { Nulleable } from '../Types/Nulleable';
 import { ConsulterOptions } from '../Types/OptionsRepository';
+import { Query } from './Query';
 
 /**
  * Interface of a Consulter type class that allow to consult and execute queries on a database
@@ -63,7 +64,7 @@ export interface Repository<T extends Entity, D extends JsonDocument> {
 	 * @param sql Custom query
 	 * @returns An array of results in relation with the query
 	 */
-	execute(query: any): Promise<Array<any>>;
+	execute(query: Query): Promise<Array<any>>;
 
 	/**
 	 * Method tha verify if an index appears in the Database

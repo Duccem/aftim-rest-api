@@ -1,8 +1,10 @@
+import { Entity } from '../Entity';
+import { JsonDocument } from '../Types/JsonDocument';
 import { ConsulterOptions } from '../Types/OptionsRepository';
 /**
  * Interface that define the methods that creates the queries and consults to the database
  */
-export interface QueryMaker {
+export interface QueryMaker<T extends Entity, D extends JsonDocument> {
 	/**
 	 * Make the query to consult many records on the database
 	 * @param model Target model name
