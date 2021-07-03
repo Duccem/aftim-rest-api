@@ -1,8 +1,8 @@
-import { Entity } from '../../../domain/Entity';
+import { ConsulterOptions } from '../../../domain/Repositories/OptionsRepository';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
+import { Entity } from '../../../domain/Types/Entity';
 import { JsonDocument } from '../../../domain/Types/JsonDocument';
 import { Constructor } from '../../../domain/Types/Nulleable';
-import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
 
 const SIMPLE_OPS = ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'like', 'notLike'];
 const ARRAY_OPS = ['in', 'notIn'];

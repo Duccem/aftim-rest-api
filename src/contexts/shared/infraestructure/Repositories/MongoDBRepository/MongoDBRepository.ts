@@ -1,13 +1,13 @@
 //Libraries
-import { Entity } from '../../../domain/Entity';
+import { ConsulterOptions } from '../../../domain/Repositories/OptionsRepository';
 import { Query } from '../../../domain/Repositories/Query';
 import { QueryMaker } from '../../../domain/Repositories/QueryMaker';
 //Personal Imports
 import { Repository } from '../../../domain/Repositories/Repository';
 import { RepositoryConnection } from '../../../domain/Repositories/RepositoryConnection';
+import { Entity } from '../../../domain/Types/Entity';
 import { JsonDocument } from '../../../domain/Types/JsonDocument';
 import { Constructor, Nulleable } from '../../../domain/Types/Nulleable';
-import { ConsulterOptions } from '../../../domain/Types/OptionsRepository';
 import { MongoDBDataMapper } from './MongoDBDataMapper';
 //Own context
 import { MongoDBQueryMaker } from './MongoDBQueryMaker';

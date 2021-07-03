@@ -1,4 +1,4 @@
-import { Entity } from '../Entity';
+import { Entity } from '../Types/Entity';
 import { JsonDocument } from '../Types/JsonDocument';
 import { Constructor } from '../Types/Nulleable';
 import { Repository } from './Repository';

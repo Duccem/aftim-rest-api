@@ -7,8 +7,8 @@ import express, { Application } from 'express';
 import { Server } from 'http';
 import passport from 'passport';
 //Shared context domain implematations
-import { Logger } from '../../contexts/shared/infraestructure/Logger';
-import ducentrace from '../../contexts/shared/infraestructure/Tracer';
+import { Logger } from '../../contexts/shared/infraestructure/Development/Logger';
+import ducentrace from '../../contexts/shared/infraestructure/Development/Tracer';
 // bootstrapping functions
 import { connect } from './config/connections';
 import { setContainer } from './config/container';

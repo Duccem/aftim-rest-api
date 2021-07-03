@@ -1,7 +1,7 @@
 import { createClient } from 'async-redis';
 import { ClientOpts } from 'redis';
 import { CacheBucket } from '../../domain/Cache/CacheBucket';
-import { Logger } from '../Logger';
+import { Logger } from '../Development/Logger';
 
 export class RedisCacheBucket implements CacheBucket {
 	private connection: any;

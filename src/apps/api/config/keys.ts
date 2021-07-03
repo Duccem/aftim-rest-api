@@ -11,12 +11,12 @@ export const database = {
 export const messageQ = {
 	hostname: process.env.MESSAGE_Q_HOST || '',
 	protocol: process.env.MESSAGE_Q_PROTOCOL || '',
-	port: ((process.env.MESSAGE_Q_PORT as unknown) as number) || 5672,
+	port: (process.env.MESSAGE_Q_PORT as unknown as number) || 5672,
 };
 
 export const cache = {
 	host: process.env.CACHE_HOST || '',
-	port: (process.env.CACHE_PORT as unknown) as number,
+	port: process.env.CACHE_PORT as unknown as number,
 };
 
 export const email = {
@@ -32,3 +32,4 @@ export const facebook = {
 };
 export const port = process.env.PORT;
 export const env = process.env.NODE_ENV;
+export const baseUrl = process.env.BASE_URL;

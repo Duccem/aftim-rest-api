@@ -2,9 +2,9 @@ import { createNamespace, getNamespace } from 'continuation-local-storage';
 import { NextFunction, Request, Response } from 'express';
 import { Collection, MongoClient } from 'mongodb';
 import { GeneralError } from '../../../domain/Http/Errors';
+import { DatabaseOptions } from '../../../domain/Repositories/DatabaseOptions';
 import { MultiTenantRepositoryConnection, RepositoryConnection } from '../../../domain/Repositories/RepositoryConnection';
-import { DatabaseOptions } from '../../../domain/Types/DatabaseOptions';
-import { Logger } from '../../Logger';
+import { Logger } from '../../Development/Logger';
 
 export class MongoDBRepositoryConnection implements RepositoryConnection {
 	protected connection?: MongoClient;

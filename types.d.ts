@@ -1,4 +1,4 @@
-import { Logger } from "./src/contexts/shared/infraestructure/Logger";
+import { Logger } from './src/contexts/shared/infraestructure/Development/Logger';
 
 declare global {
 	namespace Express {
@@ -10,4 +10,3 @@ declare global {
 		}
 	}
 }
-

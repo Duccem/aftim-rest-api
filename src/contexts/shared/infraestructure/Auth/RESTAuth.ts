@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { Inject } from 'typedi';
-import { Auth } from '../../../ClientAttention/Users/domain/Interfaces/Auth';
+import { Auth } from '../../../WorkProgretion/Users/domain/Interfaces/Auth';
 import { AuthMiddleWare } from '../../domain/Auth/AuthMiddleware';
 import { RequestTokenized } from '../../domain/Auth/IResquest';
 import { Unauthorized } from '../../domain/Http/Errors';

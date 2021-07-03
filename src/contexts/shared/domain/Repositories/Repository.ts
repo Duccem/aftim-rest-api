@@ -1,7 +1,7 @@
-import { Entity } from '../Entity';
+import { Entity } from '../Types/Entity';
 import { JsonDocument } from '../Types/JsonDocument';
 import { Nulleable } from '../Types/Nulleable';
-import { ConsulterOptions } from '../Types/OptionsRepository';
+import { ConsulterOptions } from './OptionsRepository';
 import { Query } from './Query';
 
 /**

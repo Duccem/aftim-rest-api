@@ -2,8 +2,8 @@ import { Application } from 'express';
 import 'reflect-metadata';
 import { useContainer, useExpressServer } from 'routing-controllers';
 import { Container } from 'typedi';
-import { RESTErrorHandler } from '../../../contexts/shared/infraestructure/Errors/RESTErrorHandler';
-import { RESTResponseHandler } from '../../../contexts/shared/infraestructure/Errors/RESTResponseHandler';
+import { RESTErrorHandler } from '../../../contexts/shared/infraestructure/Http/RESTErrorHandler';
+import { RESTResponseHandler } from '../../../contexts/shared/infraestructure/Http/RESTResponseHandler';
 import { AccessController } from './AccessController';
 import { ProfileController } from './ProfileController';
 

@@ -2,7 +2,7 @@ import { connect, Options } from 'amqplib';
 import { DomainEvent } from '../../../domain/DomainEvents/DomainEvent';
 import { DomainEventSubscriber } from '../../../domain/DomainEvents/DomainEventSubscriber';
 import { EventBus } from '../../../domain/DomainEvents/EventBus';
-import { Logger } from '../../Logger';
+import { Logger } from '../../Development/Logger';
 import { RabbitMQEventEmitterBus } from './RabbitMQEventEmitterBus';
 
 export class RabbitMQEventBus implements EventBus {

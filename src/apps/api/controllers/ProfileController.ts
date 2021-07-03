@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Req, UseBefore } from 'routing-controllers';
 import { Inject } from 'typedi';
-import { ProfilesService } from '../../../contexts/ClientAttention/Profiles/services/PoliciesService';
-import { verify } from '../../../contexts/ClientAttention/Users/infraestructure/PassportJWT';
 import { RequestTokenized } from '../../../contexts/shared/domain/Auth/IResquest';
 import { Paginator } from '../../../contexts/shared/domain/Http/Paginator';
 import { Created, Founded, Listed } from '../../../contexts/shared/domain/Http/Response';
+import { ProfilesService } from '../../../contexts/WorkProgretion/Profiles/services/PoliciesService';
+import { verify } from '../../../contexts/WorkProgretion/Users/infraestructure/PassportJWT';
 
 @Controller('/profile')
 @UseBefore(verify)

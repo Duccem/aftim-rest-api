@@ -1,8 +1,8 @@
 import Container from 'typedi';
-import { Entity } from '../../../domain/Entity';
 import { Repository } from '../../../domain/Repositories/Repository';
 import { RepositoryConnection } from '../../../domain/Repositories/RepositoryConnection';
 import { RepositoryFactory } from '../../../domain/Repositories/RepositoryFactory';
+import { Entity } from '../../../domain/Types/Entity';
 import { JsonDocument } from '../../../domain/Types/JsonDocument';
 import { Constructor } from '../../../domain/Types/Nulleable';
 import { MongoDBRepository } from './MongoDBRepository';

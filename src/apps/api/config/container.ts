@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
-import { NodeMailerSender } from '../../../contexts/ClientAttention/Emails/infraestructure/NodeMailerSender';
-import { JWTAuth } from '../../../contexts/ClientAttention/Users/infraestructure/JWTAuth';
 import { MongoDBFactory } from '../../../contexts/shared/infraestructure/Repositories/MongoDBRepository/MongoDBFactory';
+import { NodeMailerSender } from '../../../contexts/WorkProgretion/Emails/infraestructure/NodeMailerSender';
+import { JWTAuth } from '../../../contexts/WorkProgretion/Users/infraestructure/JWTAuth';
 import { email, tokenKey } from '../config/keys';
 import { Connections } from './connections';
 

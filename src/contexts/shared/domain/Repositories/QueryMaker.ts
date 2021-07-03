@@ -1,6 +1,6 @@
-import { Entity } from '../Entity';
+import { Entity } from '../Types/Entity';
 import { JsonDocument } from '../Types/JsonDocument';
-import { ConsulterOptions } from '../Types/OptionsRepository';
+import { ConsulterOptions } from './OptionsRepository';
 /**
  * Interface that define the methods that creates the queries and consults to the database
  */

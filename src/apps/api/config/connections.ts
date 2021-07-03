@@ -4,10 +4,10 @@ import { EventBus } from '../../../contexts/shared/domain/DomainEvents/EventBus'
 import { GeneralError } from '../../../contexts/shared/domain/Http/Errors';
 import { RepositoryConnection } from '../../../contexts/shared/domain/Repositories/RepositoryConnection';
 import { RedisCacheBucket } from '../../../contexts/shared/infraestructure/Cache/RedisCacheBucket';
+import { Logger } from '../../../contexts/shared/infraestructure/Development/Logger';
 import { RabbitMQEventBus } from '../../../contexts/shared/infraestructure/EventBus/RabbitMQEventBus/RabbitMQEventBus';
-import { SocketIOService } from '../../../contexts/shared/infraestructure/EventBus/SocketIOEventService/SocketIOService';
-import { Logger } from '../../../contexts/shared/infraestructure/Logger';
 import { MongoDBRepositoryConnection } from '../../../contexts/shared/infraestructure/Repositories/MongoDBRepository/MongoDBRepositoryConnection';
+import { SocketIOService } from '../../../contexts/shared/infraestructure/SocketClient/SocketIOEventService/SocketIOService';
 import { cache, database, messageQ } from './keys';
 
 export type Connections = {
