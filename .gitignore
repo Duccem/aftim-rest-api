@@ -6,5 +6,5 @@ public/images/*
 .env
 package-lock.json
 db.json
-.toDo
+
 logs/*

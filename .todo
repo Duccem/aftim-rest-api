@@ -1,0 +1,14 @@
+=================
+TO DO
+=================
+
+Repositories by own Entity
+Find the way to make the queries agnostics on the services and make possible ID
+Group passports strategies on a folder
+Cryptography delegated to the password object
+Delete JWT middleware
+Formatted Login response to Http folder as an object
+One single Profile by user
+Make the company
+Make the authorization system agnostic to the service
+
